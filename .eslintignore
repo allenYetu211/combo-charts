@@ -1,0 +1,14 @@
+# modules
+node_modules
+
+# docs
+docs
+
+# dest
+es
+
+# scripts
+scripts
+
+# babel
+babel.config.js
