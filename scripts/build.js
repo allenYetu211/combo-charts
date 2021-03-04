@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-04 22:10:50
+ * @LastEditTime: 2021-03-04 23:02:27
  */
 const fs = require('fs');
 const path = require('path');
@@ -26,6 +26,10 @@ const src = components(PATH, scriptRegx);
 // 清理上一次构建结果
 removeDir(outDir);
 removeDir('./types');
+
+if (!fs.existsSync(outDir)) {
+  fs.mkdirSync(outDir);
+}
 
 // 编译文件
 src.forEach((v) => {
