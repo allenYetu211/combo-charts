@@ -6,3 +6,4 @@
  * @LastEditors: liuyin
  * @LastEditTime: 2021-03-04 22:02:19
  */
+export { default as Geo } from './Geo';
