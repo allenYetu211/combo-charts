@@ -4,7 +4,7 @@
   "description": "",
   "files": [
     "es",
-    "lib"
+    "types"
   ],
   "module": "es/index.js",
   "types": "types/index.d.ts",
