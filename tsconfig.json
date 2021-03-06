@@ -11,7 +11,8 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "isolatedModules": true,
-    "outDir": "types"
+    "outDir": "types",
+    "noEmitOnError": true
   },
   "include": ["components"],
   "exclude": ["node_modules"]
