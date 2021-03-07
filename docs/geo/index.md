@@ -60,7 +60,7 @@ function PageName(props) {
         </tr>
         <tr>
             <td>areaStyle</td>
-            <td><a href="##AreaStyle">AreaStyle</a></td>
+            <td><a href="#areastyle">AreaStyle</a></td>
             <td>地图中每个区块的样式</td>
             <td>undefined</td>
         </tr>
