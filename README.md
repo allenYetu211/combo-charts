@@ -1,1 +1,27 @@
 # 起步
+
+`combo-charts` 是一个基于 `React` 的可视化组件库。它提供了一些基本的可视化组件，你也可以通过这些基本组件组合成自己想要的组件。
+
+# 基本使用
+
+引入 `combo-charts`：
+
+```typescript
+import { Geo } from 'combo-charts';
+```
+
+使用组件：
+
+```tsx
+function YourPage(props: any) {
+    return (
+    	<>
+        	...
+        	<Geo width="500" height="500" />
+        </>
+    );
+}
+```
+
+有关 `combo-charts` 的更多内容请查看 [组件文档](./docs/README.md) 。
+
