@@ -7,7 +7,7 @@ Geo 组件是用于绘制地图的组件。
 ```tsx
 import { Geo } from 'combo-charts';
 
-function PageName(props) {
+function PageName(props: any) {
   return (
     <Geo width="500" height="500">
       {/* svg 的元素可以放这里 */}

@@ -4,24 +4,16 @@
 
 # 基本使用
 
-引入 `combo-charts`：
-
-```typescript
-import { Geo } from 'combo-charts';
-```
-
-使用组件：
-
 ```tsx
-function YourPage(props: any) {
-    return (
-    	<>
-        	...
-        	<Geo width="500" height="500" />
-        </>
-    );
+import { Geo } from 'combo-charts';
+
+function PageName(props: any) {
+  return (
+    <>
+      <Geo width="500" height="500" />
+    </>
+  );
 }
 ```
 
 有关 `combo-charts` 的更多内容请查看 [组件文档](./docs/README.md) 。
-
