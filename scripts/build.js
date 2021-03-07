@@ -4,34 +4,32 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-06 12:52:18
+ * @LastEditTime: 2021-03-07 13:56:45
  */
 const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
 const proc = require('child_process');
 const ProgressBar = require('progress');
-const { components, removeDir } = require('./utils');
-
-// 组件库目录
-const PATH = './components';
+const { listFile, removeDir } = require('./utils');
 
 // 要编译的文件名正则
 const scriptRegx = /\.tsx?$/;
-
-// 输出目录
 const outDir = './es';
+const typeDir = './types';
+const source = './components';
+const tsCmd = 'tsc';
 
 // 清理上一次构建结果
 removeDir(outDir);
-removeDir('./types');
+removeDir(typeDir);
 
 try {
   // 获取所有组件
-  const src = components(PATH, scriptRegx);
+  const src = listFile(source, scriptRegx);
 
   // 编译 ts，生成 `.d.ts`
-  proc.execSync(`tsc`, { stdio: 'inherit' });
+  proc.execSync(tsCmd, { stdio: 'inherit' });
 
   const bar = new ProgressBar(':current/:total [:bar] :percent', {
     total: src.length,
@@ -43,15 +41,13 @@ try {
     },
   });
 
-  if (!fs.existsSync(outDir)) {
-    console.log('Create es directory\n');
-    fs.mkdirSync(outDir);
-  }
+  console.log('Create es directory\n');
+  fs.mkdirSync(outDir);
 
   // 编译文件
   src.forEach((v) => {
     const { code } = babel.transformFileSync(v);
-    const filename = v.replace(PATH, outDir).replace(scriptRegx, '.js');
+    const filename = v.replace(source, outDir).replace(scriptRegx, '.js');
     const p = path.dirname(filename);
     // 创建文件夹
     if (!fs.existsSync(p)) {

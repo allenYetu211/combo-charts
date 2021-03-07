@@ -4,18 +4,18 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-04 22:17:07
+ * @LastEditTime: 2021-03-07 13:20:33
  */
 const path = require('path');
 const fs = require('fs');
 
 /**
- * 递归查找要编译的文件
+ * 递归遍历出所有符合regx规则的文件
  * @param {string} src 要查找的目录
  * @param {RegExp} regx 匹配规则
  * @returns 在 `src` 目录下，匹配正则 `regx` 的所有文件
  */
-function components(src, regx) {
+function listFile(src, regx) {
   // src 如果不是目录就直接返回空数组
   if (!fs.statSync(src).isDirectory()) {
     return [];
@@ -43,7 +43,7 @@ function components(src, regx) {
 }
 
 /**
- * 删除目录中所有文件和目录
+ * 删除目录中所有文件和子目录
  * @param {string} dir 要删除的目录
  */
 function removeDir(dir) {
@@ -66,6 +66,6 @@ function removeDir(dir) {
 }
 
 module.exports = {
-  components,
+  listFile,
   removeDir,
 };
