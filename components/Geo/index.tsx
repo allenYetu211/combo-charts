@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 15:50:29
+ * @LastEditTime: 2021-03-08 16:57:10
  * @Description: file content
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -21,8 +21,8 @@ export interface SimpleGeoJSON {
 export type GeoJSONFunction = () => Promise<SimpleGeoJSON>;
 
 interface GeoPropsType {
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
   zoomable?: boolean;
   maximumScale?: number;
   geoJson?: GeoJSONFunction | SimpleGeoJSON;
@@ -49,13 +49,15 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
 
   const projection = useMemo(
     () =>
-      d3Geo.geoMercator().fitExtent(
-        [
-          [0, 0],
-          [innerWidth, innerHeight],
-        ],
-        geoData
-      ),
+      !innerHeight || !innerWidth
+        ? undefined
+        : d3Geo.geoMercator().fitExtent(
+            [
+              [0, 0],
+              [innerWidth, innerHeight],
+            ],
+            geoData
+          ),
     [innerWidth, innerHeight, geoData]
   );
 
@@ -81,13 +83,13 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
         clientWidth: 0,
         clientHeight: 0,
       };
-      if (width) {
-        setInnerWidth(width);
+      if (width !== undefined) {
+        setInnerWidth(Number(width));
       } else {
         setInnerWidth(clientWidth);
       }
-      if (height) {
-        setInnerHeight(height);
+      if (height !== undefined) {
+        setInnerHeight(Number(height));
       } else {
         setInnerHeight(clientHeight);
       }
