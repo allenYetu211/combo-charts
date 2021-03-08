@@ -9,7 +9,7 @@ import { Geo } from 'combo-charts';
 
 function PageName(props: any) {
   return (
-    <Geo width="500" height="500">
+    <Geo width="500" height="500" geoJson={data}>
       {/* svg 的元素可以放这里 */}
     </Geo>
   );
@@ -31,13 +31,13 @@ function PageName(props: any) {
         <tr>
             <td>width</td>
             <td>number</td>
-            <td>组件的宽度</td>
+          <td>组件的宽度，如果该值为 <code>undefined</code> 那么组件的宽度会设置为父组件的宽度</td>
             <td>undefined</td>
         </tr>
         <tr>
             <td>height</td>
             <td>number</td>
-            <td>组件的高度</td>
+          <td>组件的高度，如果该值为 <code>undefined</code> 那么组件的高度会设置为父组件的高度</td>
             <td>undefined</td>
         </tr>
         <tr>
@@ -54,8 +54,8 @@ function PageName(props: any) {
         </tr>
         <tr>
             <td>geoJson</td>
-            <td>ExtendedFeatureCollection</td>
-            <td>地图 geoJson 数据</td>
+            <td>SimpleGeoJSON | GeoJSONFunction</td>
+          <td>地图 geoJson 数据，可以是普通的 geoJson 数据，也可以是一个返回 <code>Promise</code> 的函数</td>
             <td>undefined</td>
         </tr>
         <tr>
@@ -66,6 +66,7 @@ function PageName(props: any) {
         </tr>
     </tbody>
 </table>
+
 
 ## AreaStyle
 
