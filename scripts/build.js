@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 16:02:35
+ * @LastEditTime: 2021-03-08 21:06:18
  */
 const fs = require('fs-extra');
 const glob = require('glob');
@@ -40,30 +40,39 @@ src.forEach((v) => {
 
 process.stderr.write('\n');
 
-const bar = new ProgressBar(chalk.cyan('build') + ' '+ chalk.grey('[:bar]') +' ' + chalk.green(':percent'), {
-  total: src.length * 2,
-  width: 30,
-  complete: '=',
-  clear: false,
-  callback() {
-    process.stderr.write(chalk.green('Compile success!\n\n'));
-  },
-});
+const bar = new ProgressBar(
+  chalk.cyan('build') +
+    ' ' +
+    chalk.grey('[:bar]') +
+    ' ' +
+    chalk.green(':percent'),
+  {
+    total: src.length * 2,
+    width: 30,
+    complete: '=',
+    clear: false,
+    callback() {
+      process.stderr.write(chalk.green('Compile success!\n\n'));
+    },
+  }
+);
 
 const timer = setInterval(function () {
   if (bar.curr < src.length) {
     bar.tick(1);
   } else {
-    bar.update(0.49);
+    bar.update((bar.curr - 1) / (src.length * 2));
   }
-}, 80 * src.length);
+}, 40 * src.length);
 
 // 编译 ts，生成 `.d.ts`
-proc.exec(tsCmd, { stdio: 'inherit' }, function (err) {
+proc.exec(tsCmd, function (err, stdout) {
   clearInterval(timer);
   bar.update(0.5);
   if (err) {
-    console.error(err);
+    process.stderr.write('\n\n');
+    process.stderr.write(stdout);
+    process.stderr.write('\n\n');
     return;
   }
   // 编译文件
