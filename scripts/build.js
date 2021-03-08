@@ -4,11 +4,12 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-07 21:34:40
+ * @LastEditTime: 2021-03-08 16:02:35
  */
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
+const chalk = require('chalk');
 const babel = require('@babel/core');
 const proc = require('child_process');
 const ProgressBar = require('progress');
@@ -39,13 +40,13 @@ src.forEach((v) => {
 
 process.stderr.write('\n');
 
-const bar = new ProgressBar(':current/:total [:bar] :percent', {
+const bar = new ProgressBar(chalk.cyan('build') + ' '+ chalk.grey('[:bar]') +' ' + chalk.green(':percent'), {
   total: src.length * 2,
   width: 30,
   complete: '=',
   clear: false,
   callback() {
-    process.stderr.write('Compile success!\n\n');
+    process.stderr.write(chalk.green('Compile success!\n\n'));
   },
 });
 
@@ -53,7 +54,7 @@ const timer = setInterval(function () {
   if (bar.curr < src.length) {
     bar.tick(1);
   } else {
-    bar.update((bar.curr - 1) / (src.length * 2));
+    bar.update(0.49);
   }
 }, 80 * src.length);
 
