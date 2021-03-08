@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 16:57:10
+ * @LastEditTime: 2021-03-08 21:10:33
  * @Description: file content
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -100,10 +100,8 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
 
   return (
     <svg width={innerWidth} height={innerHeight} ref={ref}>
-      <GeoContext.Provider
-        value={{ width: innerWidth, height: innerHeight, projection }}
-      >
-        <Area geoJson={geoData} style={areaStyle} />
+      <GeoContext.Provider value={{ projection }}>
+        <Area data={geoData} style={areaStyle} />
         {children}
       </GeoContext.Provider>
     </svg>

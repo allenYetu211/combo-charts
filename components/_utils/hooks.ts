@@ -2,10 +2,10 @@
  * @Author: liuyin
  * @Date: 2021-03-07 10:58:14
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 17:40:39
+ * @LastEditTime: 2021-03-08 20:39:49
  * @Description: file content
  */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import * as d3Zoom from 'd3-zoom';
 import * as d3Selection from 'd3-selection';
 
@@ -41,39 +41,4 @@ export function useZoom(
       }
     }
   }, [width, height, ref, maxScale, zoomable]);
-}
-
-export function useRefresh(
-  renderFn: () => void,
-  renderListen: React.DependencyList,
-  styleFn: () => void,
-  styleListen: React.DependencyList
-): void {
-  const renderFnRef = useRef<() => void>(() => 0);
-  const styleFnRef = useRef<() => void>(() => 0);
-
-  useEffect(() => {
-    renderFnRef.current = renderFn;
-  }, [renderFn]);
-
-  useEffect(() => {
-    styleFnRef.current = styleFn;
-  }, [styleFn]);
-
-  useEffect(() => {
-    if (renderFnRef.current) {
-      renderFnRef.current();
-    }
-    if (styleFnRef.current) {
-      styleFnRef.current();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, renderListen);
-
-  useEffect(() => {
-    if (styleFnRef.current) {
-      styleFnRef.current();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, styleListen);
 }

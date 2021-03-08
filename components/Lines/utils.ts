@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-08 17:05:37
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 17:07:41
+ * @LastEditTime: 2021-03-08 19:28:54
  */
 import { Coordinate } from '../_utils/interface';
 import Linear from '../_utils/Linear';
