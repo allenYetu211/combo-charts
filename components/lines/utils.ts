@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-08 17:05:37
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 19:28:54
+ * @LastEditTime: 2021-03-09 16:25:07
  */
 import { Coordinate } from '../_utils/interface';
 import Linear from '../_utils/Linear';
@@ -27,4 +27,8 @@ export function computeControllPoint(
   const x = center[0] + xOffset; // 偏移点x点
   const y = center[1] + yOffset; // 偏移点y点
   return [x, y];
+}
+
+export function bezier(p0: Coordinate, p1: Coordinate, t: number): Coordinate {
+  return [(1 - t) * p0[0] + t * p1[0], (1 - t) * p0[1] + t * p1[1]];
 }
