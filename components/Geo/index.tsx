@@ -2,14 +2,21 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 21:10:33
+ * @LastEditTime: 2021-03-09 13:56:49
  * @Description: file content
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import * as d3Geo from 'd3-geo';
+import * as d3Selection from 'd3-selection';
 import GeoContext from './context';
-import Area, { AreaStyle } from './Area';
-import { useZoom } from '../_utils/hooks';
+import ComboContext from '../combo/context';
 
 export interface SimpleGeoJSON {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,45 +27,36 @@ export interface SimpleGeoJSON {
 
 export type GeoJSONFunction = () => Promise<SimpleGeoJSON>;
 
+export interface GeoStyle {
+  color?: string;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
 interface GeoPropsType {
-  width?: number | string;
-  height?: number | string;
-  zoomable?: boolean;
-  maximumScale?: number;
   geoJson?: GeoJSONFunction | SimpleGeoJSON;
-  areaStyle?: AreaStyle;
+  style?: GeoStyle;
   children?: React.ReactNode;
 }
 
 const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
-  const {
-    children,
-    width,
-    height,
-    geoJson,
-    areaStyle,
-    maximumScale,
-    zoomable,
-  } = props;
-  const ref = useRef<SVGSVGElement>(null);
+  const { children, geoJson, style } = props;
+  const ref = useRef<SVGGElement>(null);
   const [geoData, setGeoData] = useState<d3Geo.ExtendedFeatureCollection>(
     undefined
   );
-  const [innerWidth, setInnerWidth] = useState(0);
-  const [innerHeight, setInnerHeight] = useState(0);
+  const { width, height } = useContext(ComboContext);
 
   const projection = useMemo(
     () =>
-      !innerHeight || !innerWidth
-        ? undefined
-        : d3Geo.geoMercator().fitExtent(
-            [
-              [0, 0],
-              [innerWidth, innerHeight],
-            ],
-            geoData
-          ),
-    [innerWidth, innerHeight, geoData]
+      d3Geo.geoMercator().fitExtent(
+        [
+          [0, 0],
+          [width, height],
+        ],
+        geoData
+      ),
+    [width, height, geoData]
   );
 
   async function waitGeoData(fn: GeoJSONFunction) {
@@ -76,35 +74,39 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
     }
   }, [geoJson]);
 
-  useEffect(() => {
-    if (ref.current) {
-      const parentElement = ref.current.parentElement;
-      const { clientWidth, clientHeight } = parentElement || {
-        clientWidth: 0,
-        clientHeight: 0,
-      };
-      if (width !== undefined) {
-        setInnerWidth(Number(width));
-      } else {
-        setInnerWidth(clientWidth);
-      }
-      if (height !== undefined) {
-        setInnerHeight(Number(height));
-      } else {
-        setInnerHeight(clientHeight);
-      }
+  const redraw = useCallback(() => {
+    if (ref.current && projection && geoData) {
+      const bx = d3Selection.select(ref.current);
+      bx.selectAll('path')
+        .data(geoData.features)
+        .join('path')
+        .attr('d', d3Geo.geoPath(projection));
     }
-  }, [width, height]);
+  }, [geoData, projection]);
 
-  useZoom(ref, innerWidth, innerHeight, maximumScale, zoomable);
+  const restyle = useCallback(() => {
+    if (ref.current) {
+      d3Selection
+        .select(ref.current)
+        .selectAll('path')
+        .attr('fill', style.color)
+        .attr('stroke', style.borderColor)
+        .attr('stroke-width', style.borderWidth);
+    }
+  }, [style]);
+
+  useEffect(() => {
+    redraw();
+    restyle();
+  }, [redraw, restyle]);
 
   return (
-    <svg width={innerWidth} height={innerHeight} ref={ref}>
+    <>
+      <g ref={ref} />
       <GeoContext.Provider value={{ projection }}>
-        <Area data={geoData} style={areaStyle} />
         {children}
       </GeoContext.Provider>
-    </svg>
+    </>
   );
 };
 

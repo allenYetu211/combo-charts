@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-07 10:58:14
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 20:39:49
+ * @LastEditTime: 2021-03-09 09:35:50
  * @Description: file content
  */
 import React, { useEffect } from 'react';
@@ -13,7 +13,7 @@ export function useZoom(
   ref: React.MutableRefObject<SVGSVGElement>,
   width: number,
   height: number,
-  maxScale: number | undefined,
+  maxScale: number,
   zoomable: boolean | undefined
 ): void {
   useEffect(() => {
@@ -26,7 +26,7 @@ export function useZoom(
             [0, 0],
             [width, height],
           ])
-          .scaleExtent([1, maxScale || 3])
+          .scaleExtent([1, maxScale])
           .on('zoom', function () {
             const t = d3Zoom.zoomTransform(this);
             const w = width / t.k;

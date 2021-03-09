@@ -4,13 +4,13 @@
  * @Author: liuyin
  * @Date: 2021-03-08 16:12:12
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 20:57:11
+ * @LastEditTime: 2021-03-09 13:56:59
  */
 import React, { useRef, useContext, useCallback, useEffect } from 'react';
 import { Coordinate } from '../_utils/interface';
 import * as d3Selection from 'd3-selection';
 import * as d3Path from 'd3-path';
-import GeoContext from '../Geo/context';
+import GeoContext from '../geo/context';
 import { hasNaN } from '../_utils/utils';
 import { computeControllPoint } from './utils';
 
