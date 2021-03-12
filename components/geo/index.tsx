@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-10 16:10:05
+ * @LastEditTime: 2021-03-12 12:39:35
  * @Description: file content
  */
 import React, {
@@ -42,20 +42,22 @@ interface GeoPropsType {
 const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
   const { children, geoJson, style } = props;
   const ref = useRef<SVGGElement>(null);
-  const [geoData, setGeoData] = useState<d3Geo.ExtendedFeatureCollection>(
-    undefined
-  );
+  const [geoData, setGeoData] = useState<
+    d3Geo.ExtendedFeatureCollection | undefined
+  >(undefined);
   const { width, height } = useContext(ComboContext);
 
   const projection = useMemo(
     () =>
-      d3Geo.geoMercator().fitExtent(
-        [
-          [0, 0],
-          [width, height],
-        ],
-        geoData
-      ),
+      geoData
+        ? d3Geo.geoMercator().fitExtent(
+            [
+              [0, 0],
+              [width, height],
+            ],
+            geoData
+          )
+        : undefined,
     [width, height, geoData]
   );
 
@@ -89,9 +91,9 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
       d3Selection
         .select(ref.current)
         .selectAll('path')
-        .attr('fill', style.color)
-        .attr('stroke', style.borderColor)
-        .attr('stroke-width', style.borderWidth);
+        .attr('fill', () => style?.color || null)
+        .attr('stroke', () => style?.borderColor || null)
+        .attr('stroke-width', () => style?.borderWidth || null);
     }
   }, [style]);
 

@@ -4,13 +4,14 @@
  * @Author: liuyin
  * @Date: 2021-03-09 15:17:47
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-09 16:25:16
+ * @LastEditTime: 2021-03-12 14:02:22
  */
 import React, { useEffect, useRef } from 'react';
 import { CurvePoints, LinesStyle } from '.';
 import * as d3Selection from 'd3-selection';
 import Linear from '../_utils/Linear';
 import { bezier } from './utils';
+import { Coordinate } from '../_utils/interface';
 
 interface MotionPropsType {
   mark?: string;
@@ -25,8 +26,8 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
   const ref = useRef<SVGGElement>(null);
 
   useEffect(() => {
-    let timer: number;
-    if (ref.current) {
+    let timer: number | undefined;
+    if (ref.current && paths && points) {
       const b = d3Selection.select(ref.current);
       const group = b.selectAll('g').data(paths).join('g');
       if (group.selectChild('path').empty()) {
@@ -41,8 +42,8 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
           return data;
         })
         .attr('fill', 'none')
-        .attr('stroke', style?.color || null)
-        .attr('stroke-width', style?.width || null);
+        .attr('stroke', () => style?.color || null)
+        .attr('stroke-width', () => style?.width || null);
       const m = group.selectChild('g');
       if (mark) {
         m.data([mark])
@@ -76,7 +77,7 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
           .attr('r', function (data) {
             return data;
           })
-          .attr('fill', style?.color || null);
+          .attr('fill', () => style?.color || null);
       }
       let start = +new Date();
       p.attr('stroke-dasharray', function () {
@@ -109,7 +110,11 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
             const selectG = parent.select('g');
             const el = selectG.node() as SVGGElement;
             const bbox = el.getBBox();
-            const [p0, p1, p2] = points[i];
+            const [p0, p1, p2] = points[i] || [
+              [0, 0],
+              [0, 0],
+              [0, 0],
+            ];
             const q0 = bezier(p0, p1, per);
             const q1 = bezier(p1, p2, per);
             const line = new Linear(q0, q1);
@@ -119,7 +124,7 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
             const [line3, line4] = line2.parallel(bbox.height / 2);
             const angle = line.getAngle('deg');
             let a = angle;
-            const vector = [q1[0] - q0[0], q1[1] - q0[1]];
+            const vector: Coordinate = [q1[0] - q0[0], q1[1] - q0[1]];
             const maxC1 = Math.max(line0.c, line1.c);
             const maxC2 = Math.max(line3.c, line4.c);
             const minC1 = Math.min(line0.c, line1.c);

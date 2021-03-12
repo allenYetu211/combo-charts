@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-09 14:10:45
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-09 14:38:40
+ * @LastEditTime: 2021-03-12 12:46:22
  */
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Coordinate } from '../_utils/interface';
@@ -29,20 +29,24 @@ const Scatter: React.FC<ScatterPropsType> = (props: ScatterPropsType) => {
   const { projection } = useContext(GeoContext);
 
   const redraw = useCallback(() => {
-    if (ref.current && data) {
+    if (ref.current && data && projection) {
+      const res: { x: number; y: number }[] = [];
+      data.forEach((v) => {
+        const p = projection(v);
+        if (p) {
+          res.push({
+            x: p[0] || 0,
+            y: p[1] || 0,
+          });
+        }
+      });
       d3Selection
         .select(ref.current)
         .selectAll('circle')
-        .data(data)
+        .data(res)
         .join('circle')
-        .attr('cx', function (data) {
-          const p = projection(data);
-          return p[0] || 0;
-        })
-        .attr('cy', function (data) {
-          const p = projection(data);
-          return p[1] || 0;
-        })
+        .attr('cx', (d) => d.x)
+        .attr('cy', (d) => d.y)
         .attr('r', size || 0);
     }
   }, [data, projection, size]);
@@ -51,9 +55,9 @@ const Scatter: React.FC<ScatterPropsType> = (props: ScatterPropsType) => {
     if (ref.current) {
       d3Selection
         .selectAll('circle')
-        .attr('fill', style?.color || null)
-        .attr('stroke', style?.borderColor || null)
-        .attr('stroke-width', style?.borderWidth);
+        .attr('fill', () => style?.color || null)
+        .attr('stroke', () => style?.borderColor || null)
+        .attr('stroke-width', () => style?.borderWidth || null);
     }
   }, [style]);
 
