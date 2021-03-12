@@ -4,19 +4,29 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:16:56
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-10 16:19:17
+ * @LastEditTime: 2021-03-12 16:05:11
  */
 import React from 'react';
-import * as d3Scale from 'd3-scale';
 import { GlobalContextType } from '../_utils/interface';
+import { AxisMode, AxisProjection, ProjectionSetter } from './interface';
 
 export interface CartesianProjection {
-  x: d3Scale.ScaleLinear<number, number> | d3Scale.ScaleBand<string>;
-  y: d3Scale.ScaleLinear<number, number> | d3Scale.ScaleBand<string>;
+  x?: AxisProjection;
+  y?: AxisProjection;
 }
 
-const CartesianContext = React.createContext<
-  GlobalContextType<CartesianProjection>
->({});
+interface CartesianContextType extends GlobalContextType<CartesianProjection> {
+  xMode: AxisMode;
+  yMode: AxisMode;
+  setXProjection: ProjectionSetter;
+  setYProjection: ProjectionSetter;
+}
+
+const CartesianContext = React.createContext<CartesianContextType>({
+  xMode: 'value',
+  yMode: 'value',
+  setXProjection: () => 0,
+  setYProjection: () => 0,
+});
 
 export default CartesianContext;

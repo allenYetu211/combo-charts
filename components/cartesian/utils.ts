@@ -4,44 +4,66 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-10 15:47:17
+ * @LastEditTime: 2021-03-12 16:36:28
  */
 import * as d3Scale from 'd3-scale';
-import { AxisMode, CartesianStyle, FullSpace } from './interface';
+import {
+  Axis,
+  AxisMode,
+  AxisProjection,
+  CartesianStyle,
+  // EnumAxisProjection,
+  FullSpace,
+  // ValueAxisProjection,
+} from './interface';
 
+/**
+ * 获取轴线映射函数
+ * @param axis 轴线配置项
+ * @param range 渲染范围
+ * @returns 轴线映射函数
+ */
 export function getAxisProjection(
-  mode: 'value',
-  min: number,
-  max: number,
+  axis: Axis,
   range: [number, number]
-): d3Scale.ScaleLinear<number, number, never>;
-
-export function getAxisProjection(
-  mode: 'enum',
-  data: string[],
-  range: [number, number]
-): d3Scale.ScaleBand<string>;
-
-export function getAxisProjection(
-  arg0: AxisMode,
-  arg1: number | string[],
-  arg2: number | [number, number],
-  arg3?: [number, number]
-): d3Scale.ScaleLinear<number, number> | d3Scale.ScaleBand<string> | undefined {
-  if (
-    arg0 === 'value' &&
-    typeof arg1 === 'number' &&
-    typeof arg2 === 'number' &&
-    Array.isArray(arg3)
-  ) {
-    return d3Scale.scaleLinear().domain([arg1, arg2]).nice().range(arg3);
+): AxisProjection | undefined {
+  let res: AxisProjection | undefined;
+  switch (axis.mode) {
+    case 'value': {
+      if (axis.min === undefined || axis.max === undefined) {
+        // min 或 max 不存在的时候返回 undefined
+        res = undefined;
+        break;
+      }
+      res = {
+        value: d3Scale
+          .scaleLinear()
+          .domain([axis.min, axis.max])
+          .nice()
+          .range(range)
+          .unknown(0),
+      };
+      break;
+    }
+    case 'enum':
+      res = {
+        enum: d3Scale
+          .scaleBand()
+          .domain(axis.domain || [])
+          .range(range),
+      };
+      break;
+    default:
+      res = undefined;
   }
-  if (arg0 === 'enum' && Array.isArray(arg1) && Array.isArray(arg2)) {
-    return d3Scale.scaleBand().domain(arg1).range(arg2);
-  }
-  return undefined;
+  return res;
 }
 
+/**
+ * 根据组件样式计算出完整的组件 padding
+ * @param style 组件样式
+ * @returns padding
+ */
 export function validPadding(style: CartesianStyle | undefined): FullSpace {
   let padding: FullSpace = [0, 0, 0, 0];
   if (
@@ -72,4 +94,54 @@ export function validPadding(style: CartesianStyle | undefined): FullSpace {
     padding[3] = style.paddingLeft;
   }
   return padding;
+}
+
+/**
+ * 检查 x 轴类型与 y 轴类型是否满足组件需求
+ * @param xMode x 轴类型
+ * @param yMode y 轴类型
+ */
+export function checkMode(xMode: AxisMode, yMode: AxisMode): void {
+  if (
+    (xMode !== 'enum' && xMode !== 'value') ||
+    (yMode !== 'enum' && yMode !== 'value')
+  ) {
+    throw new Error('x 轴与 y 轴的类型必须是 AxisMode 枚举中的其中一个');
+  }
+  if (
+    (xMode === 'value' && yMode === 'value') ||
+    (xMode === 'enum' && yMode === 'enum')
+  ) {
+    throw new Error('x 轴与 y 轴的类型不能相同');
+  }
+}
+
+/**
+ * 检查轴线配置项是否符合轴类型
+ * @param x x 轴配置项
+ * @param y y 轴配置项
+ */
+export function checkAxisData(x: Axis, y: Axis): void {
+  if (x.mode === 'enum') {
+    (x.domain || []).forEach((v) => {
+      if (typeof v !== 'string') {
+        throw new Error(
+          `x 轴值域与 x 轴类型不匹配，x 轴类型为 ${
+            x.mode
+          }，值域类型为 ${typeof v}，需要的值域类型为 string`
+        );
+      }
+    });
+  }
+  if (y.mode === 'enum') {
+    (y.domain || []).forEach((v) => {
+      if (typeof v !== 'string') {
+        throw new Error(
+          `y 轴值域与 y 轴类型不匹配，y 轴类型为 ${
+            y.mode
+          }，值域类型为 ${typeof v}，需要的值域类型为 string`
+        );
+      }
+    });
+  }
 }
