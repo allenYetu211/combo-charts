@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import * as d3Geo from 'd3-geo';
-import { GlobalContextType } from '../_utils/interface';
+import { GlobalContextType } from '../_utils/types';
 
 const GeoContext = React.createContext<GlobalContextType<d3Geo.GeoProjection>>(
   {}

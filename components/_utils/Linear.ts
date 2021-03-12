@@ -4,10 +4,10 @@
  * @Author: liuyin
  * @Date: 2021-02-28 10:57:24
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 16:32:36
+ * @LastEditTime: 2021-03-12 17:43:50
  */
 
-import { Coordinate } from './interface';
+import { Coordinate } from './types';
 
 /**
  * 线性方程

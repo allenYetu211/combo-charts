@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 17:11:51
+ * @LastEditTime: 2021-03-12 17:44:20
  */
 import React, {
   useCallback,
@@ -25,7 +25,7 @@ import {
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import { Axis, CartesianStyle, ProjectionSetter } from './interface';
+import { Axis, CartesianStyle, ProjectionSetter } from './types';
 import { axisWarn } from './warn';
 
 interface CartesianPropsType {

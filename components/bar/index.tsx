@@ -4,12 +4,12 @@
  * @Author: liuyin
  * @Date: 2021-03-11 10:43:07
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 16:56:31
+ * @LastEditTime: 2021-03-12 17:44:46
  */
 import React, { useContext, useEffect, useRef } from 'react';
 import * as d3Selection from 'd3-selection';
 import CartesianContext from '../cartesian/context';
-import { BarDataType, RectBox } from './interface';
+import { BarDataType, RectBox } from './types';
 import { validData } from './utils';
 import { max, min } from 'd3-array';
 

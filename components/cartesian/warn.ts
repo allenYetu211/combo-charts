@@ -8,7 +8,7 @@
  */
 
 import { warn } from '../_utils/logger';
-import { Axis } from './interface';
+import { Axis } from './types';
 
 export function axisWarn(
   name: 'yAxis' | 'xAxis',

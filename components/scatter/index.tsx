@@ -4,10 +4,10 @@
  * @Author: liuyin
  * @Date: 2021-03-09 14:10:45
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 12:46:22
+ * @LastEditTime: 2021-03-12 17:43:58
  */
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import { Coordinate } from '../_utils/interface';
+import { Coordinate } from '../_utils/types';
 import * as d3Selection from 'd3-selection';
 import GeoContext from '../geo/context';
 

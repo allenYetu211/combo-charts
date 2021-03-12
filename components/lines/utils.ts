@@ -6,7 +6,7 @@
  * @LastEditors: liuyin
  * @LastEditTime: 2021-03-12 12:41:45
  */
-import { Coordinate } from '../_utils/interface';
+import { Coordinate } from '../_utils/types';
 import Linear from '../_utils/Linear';
 
 export function computeControllPoint(

@@ -7,9 +7,9 @@
  * @LastEditTime: 2021-03-12 16:05:34
  */
 
-import { AxisMode } from '../cartesian/interface';
+import { AxisMode } from '../cartesian/types';
 import { error } from '../_utils/logger';
-import { BarDataType } from './interface';
+import { BarDataType } from './types';
 
 export function validData(data: BarDataType): void {
   data.forEach((v) => {

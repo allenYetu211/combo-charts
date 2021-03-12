@@ -11,7 +11,7 @@ import { CurvePoints, LinesStyle } from '.';
 import * as d3Selection from 'd3-selection';
 import Linear from '../_utils/Linear';
 import { bezier } from './utils';
-import { Coordinate } from '../_utils/interface';
+import { Coordinate } from '../_utils/types';
 
 interface MotionPropsType {
   mark?: string;

@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 16:36:28
+ * @LastEditTime: 2021-03-12 17:44:29
  */
 import * as d3Scale from 'd3-scale';
 import {
@@ -15,7 +15,7 @@ import {
   // EnumAxisProjection,
   FullSpace,
   // ValueAxisProjection,
-} from './interface';
+} from './types';
 
 /**
  * 获取轴线映射函数

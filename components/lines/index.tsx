@@ -7,7 +7,7 @@
  * @LastEditTime: 2021-03-09 16:54:55
  */
 import React, { useRef, useContext, useEffect, useMemo } from 'react';
-import { Coordinate } from '../_utils/interface';
+import { Coordinate } from '../_utils/types';
 import * as d3Selection from 'd3-selection';
 import * as d3Path from 'd3-path';
 import GeoContext from '../geo/context';

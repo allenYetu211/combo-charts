@@ -4,11 +4,11 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:16:56
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 16:05:11
+ * @LastEditTime: 2021-03-12 17:44:36
  */
 import React from 'react';
-import { GlobalContextType } from '../_utils/interface';
-import { AxisMode, AxisProjection, ProjectionSetter } from './interface';
+import { GlobalContextType } from '../_utils/types';
+import { AxisMode, AxisProjection, ProjectionSetter } from './types';
 
 export interface CartesianProjection {
   x?: AxisProjection;
