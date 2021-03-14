@@ -13,3 +13,6 @@ scripts
 
 # babel
 babel.config.js
+
+# jest
+jest.config.js
