@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-09 15:17:47
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 14:02:22
+ * @LastEditTime: 2021-03-14 14:24:02
  */
 import React, { useEffect, useRef } from 'react';
 import { CurvePoints, LinesStyle } from '.';
@@ -26,7 +26,7 @@ const Motion: React.FC<MotionPropsType> = (props: MotionPropsType) => {
   const ref = useRef<SVGGElement>(null);
 
   useEffect(() => {
-    let timer: number | undefined;
+    let timer: NodeJS.Timeout | undefined;
     if (ref.current && paths && points) {
       const b = d3Selection.select(ref.current);
       const group = b.selectAll('g').data(paths).join('g');
