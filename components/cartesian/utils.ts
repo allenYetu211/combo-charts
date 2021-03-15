@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 12:03:33
+ * @LastEditTime: 2021-03-15 13:15:29
  */
 import * as d3Scale from 'd3-scale';
 import {
@@ -12,9 +12,7 @@ import {
   AxisMode,
   AxisProjection,
   CartesianStyle,
-  // EnumAxisProjection,
   FullSpace,
-  // ValueAxisProjection,
 } from './types';
 
 /**
