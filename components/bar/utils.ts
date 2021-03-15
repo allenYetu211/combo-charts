@@ -28,21 +28,21 @@ export function matchWithAxisMode(
     throw new Error(`类型为 ${typeof data} 的数据不能应用于当前坐标系`);
   } else if (
     xMode === 'value' &&
-    yMode === 'enum' &&
+    yMode === 'category' &&
     typeof data !== 'number' &&
     (typeof data[0] !== 'number' || typeof data[1] !== 'string')
   ) {
     throw new Error(`类型为 ${typeof data} 的数据不能应用于当前坐标系`);
   } else if (
-    xMode === 'enum' &&
+    xMode === 'category' &&
     yMode === 'value' &&
     typeof data !== 'number' &&
     (typeof data[0] !== 'string' || typeof data[1] !== 'number')
   ) {
     throw new Error(`类型为 ${typeof data} 的数据不能应用于当前坐标系`);
   } else if (
-    xMode === 'enum' &&
-    yMode === 'enum' &&
+    xMode === 'category' &&
+    yMode === 'category' &&
     typeof data !== 'number' &&
     (typeof data[0] !== 'string' || typeof data[1] !== 'string')
   ) {

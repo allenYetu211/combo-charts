@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 13:15:29
+ * @LastEditTime: 2021-03-15 17:05:15
  */
 import * as d3Scale from 'd3-scale';
 import {
@@ -43,9 +43,9 @@ export function getAxisProjection(
       };
       break;
     }
-    case 'enum':
+    case 'category':
       res = {
-        enum: d3Scale
+        category: d3Scale
           .scaleBand()
           .domain(axis.domain || [])
           .range(range)
@@ -102,14 +102,14 @@ export function validPadding(style: CartesianStyle | undefined): FullSpace {
  */
 export function checkMode(xMode: AxisMode, yMode: AxisMode): void {
   if (
-    (xMode !== 'enum' && xMode !== 'value') ||
-    (yMode !== 'enum' && yMode !== 'value')
+    (xMode !== 'category' && xMode !== 'value') ||
+    (yMode !== 'category' && yMode !== 'value')
   ) {
     throw new Error('x 轴与 y 轴的类型必须是 AxisMode 枚举中的其中一个');
   }
   if (
     (xMode === 'value' && yMode === 'value') ||
-    (xMode === 'enum' && yMode === 'enum')
+    (xMode === 'category' && yMode === 'category')
   ) {
     throw new Error('x 轴与 y 轴的类型不能相同');
   }
@@ -121,7 +121,7 @@ export function checkMode(xMode: AxisMode, yMode: AxisMode): void {
  * @param y y 轴配置项
  */
 export function checkAxisData(x: Axis, y: Axis): void {
-  if (x.mode === 'enum') {
+  if (x.mode === 'category') {
     (x.domain || []).forEach((v) => {
       if (typeof v !== 'string') {
         throw new Error(
@@ -132,7 +132,7 @@ export function checkAxisData(x: Axis, y: Axis): void {
       }
     });
   }
-  if (y.mode === 'enum') {
+  if (y.mode === 'category') {
     (y.domain || []).forEach((v) => {
       if (typeof v !== 'string') {
         throw new Error(

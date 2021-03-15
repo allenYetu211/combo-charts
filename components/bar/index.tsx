@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-11 10:43:07
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 12:05:09
+ * @LastEditTime: 2021-03-15 17:33:52
  */
 import React, { useContext, useEffect, useRef } from 'react';
 import * as d3Selection from 'd3-selection';
@@ -56,8 +56,8 @@ const Bar: React.FC<BarPropsType> = (props: BarPropsType) => {
           height: 0,
         };
         switch (xMode) {
-          case 'enum': {
-            const fnx = x['enum'];
+          case 'category': {
+            const fnx = x['category'];
             const it = fnx && fnx.domain()[i];
             const xt = fnx && it ? fnx(it) : 0;
             res.x = xt || 0;
@@ -72,8 +72,8 @@ const Bar: React.FC<BarPropsType> = (props: BarPropsType) => {
           }
         }
         switch (yMode) {
-          case 'enum': {
-            const fny = y['enum'];
+          case 'category': {
+            const fny = y['category'];
             const it = fny && fny.domain()[i];
             const yt = fny && it ? fny(it) : 0;
             res.y = yt || 0;
