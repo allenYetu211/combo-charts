@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 17:44:29
+ * @LastEditTime: 2021-03-15 12:03:33
  */
 import * as d3Scale from 'd3-scale';
 import {
@@ -50,7 +50,8 @@ export function getAxisProjection(
         enum: d3Scale
           .scaleBand()
           .domain(axis.domain || [])
-          .range(range),
+          .range(range)
+          .padding(0.1),
       };
       break;
     default:
