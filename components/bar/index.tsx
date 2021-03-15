@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-11 10:43:07
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 17:44:46
+ * @LastEditTime: 2021-03-15 12:05:09
  */
 import React, { useContext, useEffect, useRef } from 'react';
 import * as d3Selection from 'd3-selection';
@@ -29,7 +29,6 @@ const Bar: React.FC<BarPropsType> = (props: BarPropsType) => {
   } = useContext(CartesianContext);
 
   useEffect(() => {
-    console.log(projection);
     if (ref.current && data && projection) {
       validData(data);
       const { x, y } = projection;
@@ -73,13 +72,14 @@ const Bar: React.FC<BarPropsType> = (props: BarPropsType) => {
           }
         }
         switch (yMode) {
-          case 'enum':
+          case 'enum': {
             const fny = y['enum'];
             const it = fny && fny.domain()[i];
             const yt = fny && it ? fny(it) : 0;
             res.y = yt || 0;
             res.height = fny ? fny.bandwidth() : 0;
             break;
+          }
           default: {
             const fny = y['value'];
             const min = fny ? fny.domain()[0] : 0;
@@ -89,8 +89,6 @@ const Bar: React.FC<BarPropsType> = (props: BarPropsType) => {
         }
         return res;
       });
-
-      console.log(rects);
 
       d3Selection
         .select(ref.current)
