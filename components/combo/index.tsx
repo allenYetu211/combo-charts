@@ -4,13 +4,14 @@
  * @Author: liuyin
  * @Date: 2021-03-09 09:13:54
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 11:27:48
+ * @LastEditTime: 2021-03-15 13:39:08
  */
 import React, { useEffect, useRef, useState } from 'react';
 import ComboContext from './context';
 import * as d3Zoom from 'd3-zoom';
 import * as d3Selection from 'd3-selection';
 import { useFunctionState } from '../_utils/hooks/useFunctionState';
+import { ZoomFunction } from './types';
 
 interface ComboPropsType {
   width?: number | string;
@@ -18,10 +19,6 @@ interface ComboPropsType {
   zoomable?: boolean;
   maximumScale?: number | string;
   children: React.ReactNode;
-}
-
-interface ZoomFunction {
-  (this: SVGSVGElement): void;
 }
 
 const Combo: React.FC<ComboPropsType> = (props: ComboPropsType) => {
@@ -52,16 +49,16 @@ const Combo: React.FC<ComboPropsType> = (props: ComboPropsType) => {
   }, [width, height]);
 
   useEffect(() => {
-    setZoomFn(function (this: SVGSVGElement) {
-      if (ref.current) {
-        const t = d3Zoom.zoomTransform(this);
+    setZoomFn(function (this, event) {
+      if (this) {
+        const t = event.transform;
         const w = innerWidth / t.k;
         const h = innerHeight / t.k;
         let x = t.x > 0 ? 0 : -t.x / t.k;
         x = t.x > -innerWidth * (t.k - 1) ? x : innerWidth - w;
         let y = t.y > 0 ? 0 : -t.y / t.k;
         y = t.y > -innerHeight * (t.k - 1) ? y : innerHeight - h;
-        ref.current.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+        this.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
       }
     });
   }, [innerHeight, innerWidth, setZoomFn]);
@@ -77,8 +74,8 @@ const Combo: React.FC<ComboPropsType> = (props: ComboPropsType) => {
             [innerWidth, innerHeight],
           ])
           .scaleExtent([1, maximumScale ? Number(maximumScale) : 1])
-          .on('zoom', function () {
-            return zoomFn && zoomFn.call(this);
+          .on('zoom', function (event) {
+            return zoomFn && zoomFn.call(this, event);
           });
         d3Selection.select(ref.current).call(zoom);
       }
@@ -87,7 +84,13 @@ const Combo: React.FC<ComboPropsType> = (props: ComboPropsType) => {
 
   return (
     <svg width={innerWidth} height={innerHeight} ref={ref}>
-      <ComboContext.Provider value={{ width: innerWidth, height: innerHeight }}>
+      <ComboContext.Provider
+        value={{
+          width: innerWidth,
+          height: innerHeight,
+          setZoomFunction: setZoomFn,
+        }}
+      >
         {children}
       </ComboContext.Provider>
     </svg>
