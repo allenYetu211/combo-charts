@@ -4,9 +4,9 @@
  * @Author: liuyin
  * @Date: 2021-03-10 15:33:51
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 17:05:32
+ * @LastEditTime: 2021-03-17 21:01:31
  */
-import * as d3Scale from 'd3-scale';
+import * as d3Axis from 'd3-axis';
 
 export interface CartesianStyle {
   padding?: Space;
@@ -19,13 +19,13 @@ export interface CartesianStyle {
 export type AxisMode = 'value' | 'category';
 
 export interface ValueAxis {
-  mode?: 'value';
+  mode: 'value';
   min?: number;
   max?: number;
 }
 
 export interface CategoryAxis {
-  mode?: 'category';
+  mode: 'category';
   domain?: string[];
 }
 
@@ -38,9 +38,11 @@ export type Space = [number, number, number, number] | number;
  */
 export type FullSpace = [number, number, number, number];
 
-export type AxisProjection = {
-  value?: d3Scale.ScaleLinear<number, number, number>;
-  category?: d3Scale.ScaleBand<string>;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AxisProjection = d3Axis.AxisScale<any>;
 
-export type ProjectionSetter = (minValue: number, maxValue: number) => void;
+export type ProjectionSetter = (
+  type: 'x' | 'y',
+  minValue: number,
+  maxValue: number
+) => void;

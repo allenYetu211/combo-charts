@@ -4,16 +4,10 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 17:05:15
+ * @LastEditTime: 2021-03-17 21:00:36
  */
 import * as d3Scale from 'd3-scale';
-import {
-  Axis,
-  AxisMode,
-  AxisProjection,
-  CartesianStyle,
-  FullSpace,
-} from './types';
+import { Axis, AxisProjection, CartesianStyle, FullSpace } from './types';
 
 /**
  * 获取轴线映射函数
@@ -25,37 +19,26 @@ export function getAxisProjection(
   axis: Axis,
   range: [number, number]
 ): AxisProjection | undefined {
-  let res: AxisProjection | undefined;
   switch (axis.mode) {
     case 'value': {
       if (axis.min === undefined || axis.max === undefined) {
         // min 或 max 不存在的时候返回 undefined
-        res = undefined;
-        break;
+        return undefined;
       }
-      res = {
-        value: d3Scale
-          .scaleLinear()
-          .domain([axis.min, axis.max])
-          .nice()
-          .range(range)
-          .unknown(0),
-      };
-      break;
+      return d3Scale
+        .scaleLinear()
+        .domain([axis.min, axis.max])
+        .nice()
+        .range(range)
+        .unknown(0);
     }
-    case 'category':
-      res = {
-        category: d3Scale
-          .scaleBand()
-          .domain(axis.domain || [])
-          .range(range)
-          .padding(0.1),
-      };
-      break;
     default:
-      res = undefined;
+      return d3Scale
+        .scaleBand()
+        .domain(axis.domain || [])
+        .range(range)
+        .padding(0.1);
   }
-  return res;
 }
 
 /**
@@ -93,54 +76,4 @@ export function validPadding(style: CartesianStyle | undefined): FullSpace {
     padding[3] = style.paddingLeft;
   }
   return padding;
-}
-
-/**
- * 检查 x 轴类型与 y 轴类型是否满足组件需求
- * @param xMode x 轴类型
- * @param yMode y 轴类型
- */
-export function checkMode(xMode: AxisMode, yMode: AxisMode): void {
-  if (
-    (xMode !== 'category' && xMode !== 'value') ||
-    (yMode !== 'category' && yMode !== 'value')
-  ) {
-    throw new Error('x 轴与 y 轴的类型必须是 AxisMode 枚举中的其中一个');
-  }
-  if (
-    (xMode === 'value' && yMode === 'value') ||
-    (xMode === 'category' && yMode === 'category')
-  ) {
-    throw new Error('x 轴与 y 轴的类型不能相同');
-  }
-}
-
-/**
- * 检查轴线配置项是否符合轴类型
- * @param x x 轴配置项
- * @param y y 轴配置项
- */
-export function checkAxisData(x: Axis, y: Axis): void {
-  if (x.mode === 'category') {
-    (x.domain || []).forEach((v) => {
-      if (typeof v !== 'string') {
-        throw new Error(
-          `x 轴值域与 x 轴类型不匹配，x 轴类型为 ${
-            x.mode
-          }，值域类型为 ${typeof v}，需要的值域类型为 string`
-        );
-      }
-    });
-  }
-  if (y.mode === 'category') {
-    (y.domain || []).forEach((v) => {
-      if (typeof v !== 'string') {
-        throw new Error(
-          `y 轴值域与 y 轴类型不匹配，y 轴类型为 ${
-            y.mode
-          }，值域类型为 ${typeof v}，需要的值域类型为 string`
-        );
-      }
-    });
-  }
 }
