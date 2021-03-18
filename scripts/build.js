@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-08 21:06:18
+ * @LastEditTime: 2021-03-18 08:37:44
  */
 const fs = require('fs-extra');
 const glob = require('glob');
@@ -63,7 +63,7 @@ const timer = setInterval(function () {
   } else {
     bar.update((bar.curr - 1) / (src.length * 2));
   }
-}, 40 * src.length);
+}, 140);
 
 // 编译 ts，生成 `.d.ts`
 proc.exec(tsCmd, function (err, stdout) {
