@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-17 18:42:10
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-17 23:07:39
+ * @LastEditTime: 2021-03-18 20:29:28
  * @Description: file content
  */
 import React, { useContext, useEffect, useState } from 'react';
@@ -58,10 +58,13 @@ function projectResult(
   }
 }
 
-const applyCartesian = <P extends CartesianChildrenProps>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const applyCartesian = <P extends any>(
   Component: React.ComponentType<P & InjectProps>
-): React.ComponentType<P> => {
-  const ApplyComponent: React.FC<P> = (props: P) => {
+): React.FC<P & CartesianChildrenProps> => {
+  const ApplyComponent: React.FC<P & CartesianChildrenProps> = (
+    props: P & CartesianChildrenProps
+  ) => {
     const { data } = props;
     const { projection, updateProjection, xMode, yMode } = useContext(
       CartesianContext
