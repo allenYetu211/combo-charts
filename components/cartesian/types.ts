@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 15:33:51
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-17 21:01:31
+ * @LastEditTime: 2021-03-18 22:28:32
  */
 import * as d3Axis from 'd3-axis';
 
@@ -19,13 +19,13 @@ export interface CartesianStyle {
 export type AxisMode = 'value' | 'category';
 
 export interface ValueAxis {
-  mode: 'value';
+  mode?: 'value';
   min?: number;
   max?: number;
 }
 
 export interface CategoryAxis {
-  mode: 'category';
+  mode?: 'category';
   domain?: string[];
 }
 

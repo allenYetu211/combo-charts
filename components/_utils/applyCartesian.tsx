@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-17 18:42:10
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-18 20:29:28
+ * @LastEditTime: 2021-03-18 22:34:40
  * @Description: file content
  */
 import React, { useContext, useEffect, useState } from 'react';
@@ -58,13 +58,14 @@ function projectResult(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const applyCartesian = <P extends any>(
-  Component: React.ComponentType<P & InjectProps>
-): React.FC<P & CartesianChildrenProps> => {
-  const ApplyComponent: React.FC<P & CartesianChildrenProps> = (
-    props: P & CartesianChildrenProps
-  ) => {
+type Subtract<T, K> = Omit<T, keyof K>;
+
+const applyCartesian = <P extends InjectProps>(
+  Component: React.ComponentType<P>
+): React.FC<Subtract<P, InjectProps> & CartesianChildrenProps> => {
+  const ApplyComponent: React.FC<
+    Subtract<P, InjectProps> & CartesianChildrenProps
+  > = (props: Subtract<P, InjectProps> & CartesianChildrenProps) => {
     const { data } = props;
     const { projection, updateProjection, xMode, yMode } = useContext(
       CartesianContext
@@ -72,6 +73,10 @@ const applyCartesian = <P extends any>(
     const [inject, setInject] = useState<CoordinateBox[]>([]);
 
     useEffect(() => {
+      if (!xMode || !yMode) {
+        setInject([]);
+        return;
+      }
       if (data && projection) {
         const { x, y } = projection;
         let minValue: Coordinate = [Infinity, Infinity];
@@ -133,7 +138,7 @@ const applyCartesian = <P extends any>(
       }
     }, [data, projection, updateProjection, xMode, yMode]);
 
-    return <Component injectData={inject} {...props} />;
+    return <Component {...(props as P)} injectData={inject} />;
   };
   return ApplyComponent;
 };

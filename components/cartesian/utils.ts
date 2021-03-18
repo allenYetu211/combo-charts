@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:26:23
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-17 21:00:36
+ * @LastEditTime: 2021-03-18 22:29:52
  */
 import * as d3Scale from 'd3-scale';
 import { Axis, AxisProjection, CartesianStyle, FullSpace } from './types';
@@ -16,9 +16,12 @@ import { Axis, AxisProjection, CartesianStyle, FullSpace } from './types';
  * @returns 轴线映射函数
  */
 export function getAxisProjection(
-  axis: Axis,
+  axis: Axis | undefined,
   range: [number, number]
 ): AxisProjection | undefined {
+  if (!axis) {
+    return undefined;
+  }
   switch (axis.mode) {
     case 'value': {
       if (axis.min === undefined || axis.max === undefined) {
@@ -32,12 +35,14 @@ export function getAxisProjection(
         .range(range)
         .unknown(0);
     }
-    default:
+    case 'category':
       return d3Scale
         .scaleBand()
         .domain(axis.domain || [])
         .range(range)
         .padding(0.1);
+    default:
+      return undefined;
   }
 }
 

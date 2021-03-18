@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-17 22:57:20
+ * @LastEditTime: 2021-03-18 22:33:10
  */
 import React, {
   useCallback,
@@ -22,8 +22,8 @@ import * as d3Axis from 'd3-axis';
 import { Axis, CartesianStyle, ProjectionSetter } from './types';
 
 interface CartesianPropsType {
-  xAxis: Axis;
-  yAxis: Axis;
+  xAxis?: Axis;
+  yAxis?: Axis;
   style?: CartesianStyle;
   children?: React.ReactNode;
 }
@@ -58,7 +58,7 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
   const updateProjection = useCallback<ProjectionSetter>(
     (type, minValue, maxValue) => {
       const axis = type === 'x' ? xAxis : yAxis;
-      if (axis.mode !== 'value') {
+      if (!axis || axis.mode !== 'value') {
         return;
       }
       const { min, max } = axis;
@@ -113,8 +113,8 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
         value={{
           projection,
           updateProjection,
-          xMode: xAxis.mode,
-          yMode: yAxis.mode,
+          xMode: xAxis?.mode,
+          yMode: yAxis?.mode,
         }}
       >
         {children}
