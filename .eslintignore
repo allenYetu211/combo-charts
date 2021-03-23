@@ -6,7 +6,8 @@ docs
 
 # dest
 es
-types
+lib
+tmp
 
 # scripts
 scripts

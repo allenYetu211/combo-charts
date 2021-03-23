@@ -3,7 +3,8 @@ node_modules
 
 # dest
 es
-types
+lib
+tmp
 
 # yarn
 yarn.lock

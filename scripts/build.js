@@ -4,39 +4,36 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-18 08:37:44
+ * @LastEditTime: 2021-03-23 23:54:36
  */
 const fs = require('fs-extra');
 const glob = require('glob');
-const path = require('path');
 const chalk = require('chalk');
-const babel = require('@babel/core');
 const proc = require('child_process');
 const ProgressBar = require('progress');
+const { compile } = require('./compile');
 
 // 要编译的文件名正则
-const scriptRegx = /\.tsx?$/;
-const declareRegx = /\.d\.ts$/;
-const outDir = './es';
-const typeDir = './types';
+const outDir = [
+  {
+    path: './es',
+    env: 'esm',
+  },
+  {
+    path: './lib',
+  },
+];
 const source = './components';
 const tsCmd = 'tsc';
+const times = 4;
 
 // 清理上一次构建结果
-fs.emptyDirSync(outDir);
-fs.emptyDirSync(typeDir);
+outDir.forEach((v) => {
+  fs.emptyDirSync(v.path);
+});
 
 // 获取所有文件
 const src = glob.sync(source + '/**/*.ts?(x)');
-const general = [];
-const declare = [];
-src.forEach((v) => {
-  if (v.match(declareRegx)) {
-    declare.push(v);
-  } else {
-    general.push(v);
-  }
-});
 
 process.stderr.write('\n');
 
@@ -47,49 +44,36 @@ const bar = new ProgressBar(
     ' ' +
     chalk.green(':percent'),
   {
-    total: src.length * 2,
+    total: src.length * times,
     width: 30,
     complete: '=',
     clear: false,
     callback() {
-      process.stderr.write(chalk.green('Compile success!\n\n'));
+      process.stderr.write(chalk.green('\n\nCompile success!\n\n'));
     },
   }
 );
 
 const timer = setInterval(function () {
-  if (bar.curr < src.length) {
+  if (bar.curr < src.length * 2) {
     bar.tick(1);
   } else {
-    bar.update((bar.curr - 1) / (src.length * 2));
+    bar.update((bar.curr - 1) / (src.length * times));
   }
 }, 140);
 
-// 编译 ts，生成 `.d.ts`
-proc.exec(tsCmd, function (err, stdout) {
-  clearInterval(timer);
-  bar.update(0.5);
-  if (err) {
-    process.stderr.write('\n\n');
-    process.stderr.write(stdout);
-    process.stderr.write('\n\n');
-    return;
-  }
-  // 编译文件
-  general.forEach((v) => {
-    const { code } = babel.transformFileSync(v);
-    const filename = v.replace(source, outDir).replace(scriptRegx, '.js');
-    const p = path.dirname(filename);
-    fs.ensureDirSync(p);
-    fs.writeFileSync(filename, code);
-    bar.tick(1);
-  });
+outDir.forEach((v) => {
+  const { curr } = bar;
+  // 编译 ts，生成 `.d.ts`
+  proc.execSync(`${tsCmd} --outDir ${v.path}`, { stdio: 'inherit' });
+  bar.update((curr + src.length) / (src.length * times));
+});
 
-  // 复制声明文件
-  declare.forEach((v) => {
-    const filename = v.replace(source, typeDir);
-    fs.ensureDirSync(path.dirname(filename));
-    fs.copyFileSync(v, filename);
+clearInterval(timer);
+
+outDir.forEach((v) => {
+  process.env.BABEL_ENV = v.env;
+  compile(source, v.path, src, () => {
     bar.tick(1);
   });
 });

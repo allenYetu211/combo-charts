@@ -4,10 +4,11 @@
   "description": "",
   "files": [
     "es",
-    "types"
+    "lib"
   ],
   "module": "es/index.js",
-  "types": "types/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
     "build": "node scripts/build.js",
