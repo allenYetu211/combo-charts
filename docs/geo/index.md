@@ -5,13 +5,13 @@ Geo 组件是用于绘制地图的组件。
 ## 基本使用
 
 ```tsx
-import { Geo } from 'combo-charts';
+import { Combo, Geo } from 'combo-charts';
 
 function PageName(props: any) {
   return (
-    <Geo width="500" height="500" geoJson={data}>
-      {/* svg 的元素可以放这里 */}
-    </Geo>
+    <Combo width="500" height="500">
+      <Geo geoJson={data}>{/* svg 的元素可以放这里 */}</Geo>
+    </Combo>
   );
 }
 ```
@@ -29,46 +29,21 @@ function PageName(props: any) {
     </thead>
     <tbody>
         <tr>
-            <td>width</td>
-            <td>number</td>
-          <td>组件的宽度，如果该值为 <code>undefined</code> 那么组件的宽度会设置为父组件的宽度</td>
-            <td>undefined</td>
-        </tr>
-        <tr>
-            <td>height</td>
-            <td>number</td>
-          <td>组件的高度，如果该值为 <code>undefined</code> 那么组件的高度会设置为父组件的高度</td>
-            <td>undefined</td>
-        </tr>
-        <tr>
-            <td>zoomable</td>
-            <td>boolean</td>
-            <td>是否支持放大与平移</td>
-            <td>undefined</td>
-        </tr>
-        <tr>
-            <td>maximumScale</td>
-            <td>number</td>
-            <td>最大放大尺寸</td>
-            <td>3</td>
-        </tr>
-        <tr>
             <td>geoJson</td>
             <td>SimpleGeoJSON | GeoJSONFunction</td>
           <td>地图 geoJson 数据，可以是普通的 geoJson 数据，也可以是一个返回 <code>Promise</code> 的函数</td>
             <td>undefined</td>
         </tr>
         <tr>
-            <td>areaStyle</td>
-            <td><a href="#areastyle">AreaStyle</a></td>
+            <td>style</td>
+            <td><a href="#geostyle">GeoStyle</a></td>
             <td>地图中每个区块的样式</td>
             <td>undefined</td>
         </tr>
     </tbody>
 </table>
 
-
-## AreaStyle
+## GeoStyle
 
 <table>
 	<thead>
