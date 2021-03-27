@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 00:45:15
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-23 23:54:36
+ * @LastEditTime: 2021-03-27 11:10:15
  */
 const fs = require('fs-extra');
 const glob = require('glob');
@@ -12,6 +12,7 @@ const chalk = require('chalk');
 const proc = require('child_process');
 const ProgressBar = require('progress');
 const { compile } = require('./compile');
+const { moveFile } = require('./utils');
 
 // 要编译的文件名正则
 const outDir = [
@@ -26,6 +27,7 @@ const outDir = [
 const source = './components';
 const tsCmd = 'tsc';
 const times = 4;
+const temp = './tmp';
 
 // 清理上一次构建结果
 outDir.forEach((v) => {
@@ -55,25 +57,37 @@ const bar = new ProgressBar(
 );
 
 const timer = setInterval(function () {
-  if (bar.curr < src.length * 2) {
+  if (bar.curr < src.length) {
     bar.tick(1);
   } else {
     bar.update((bar.curr - 1) / (src.length * times));
   }
 }, 140);
 
-outDir.forEach((v) => {
-  const { curr } = bar;
-  // 编译 ts，生成 `.d.ts`
-  proc.execSync(`${tsCmd} --outDir ${v.path}`, { stdio: 'inherit' });
-  bar.update((curr + src.length) / (src.length * times));
-});
+// generate .d.ts
+proc.exec(`${tsCmd} --outDir ${temp}`, function(err, stdout) {
+  clearInterval(timer);
+  bar.update(src.length / (src.length * times));
+  if (err) {
+    process.stdout.write('\n\n');
+    process.stdout.write(stdout);
+    process.stdout.write('\n\n');
+    return;
+  }
 
-clearInterval(timer);
-
-outDir.forEach((v) => {
-  process.env.BABEL_ENV = v.env;
-  compile(source, v.path, src, () => {
-    bar.tick(1);
+  // compile
+  const paths = [];
+  outDir.forEach((v) => {
+    process.env.BABEL_ENV = v.env;
+    compile(source, v.path, src, () => {
+      bar.tick(1);
+    });
+    paths.push(v.path);
   });
+
+  // move declare file
+  const tmps = glob.sync(temp + '/**/*.d.ts');
+  moveFile(temp, paths, tmps, function() {
+    bar.tick(1);
+  }, true);
 });
