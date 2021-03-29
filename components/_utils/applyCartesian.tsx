@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-17 18:42:10
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-18 22:34:40
+ * @LastEditTime: 2021-03-29 16:49:08
  * @Description: file content
  */
 import React, { useContext, useEffect, useState } from 'react';
@@ -126,11 +126,11 @@ const applyCartesian = <P extends InjectProps>(
             };
           }
         );
-        if (!x) {
+        if (!x && updateProjection) {
           updateProjection('x', minValue[0], maxValue[0]);
           return;
         }
-        if (!y) {
+        if (!y && updateProjection) {
           updateProjection('y', minValue[1], maxValue[1]);
           return;
         }

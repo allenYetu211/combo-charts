@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-09 09:14:08
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 13:38:50
+ * @LastEditTime: 2021-03-29 16:42:10
  */
 
 import React from 'react';
@@ -12,9 +12,9 @@ import { SetFunctionStateAction } from '../_utils/hooks/useFunctionState';
 import { ZoomFunction } from './types';
 
 export interface ComboContextType {
-  width: number;
-  height: number;
-  setZoomFunction: SetFunctionStateAction<ZoomFunction | undefined>;
+  width?: number;
+  height?: number;
+  setZoomFunction?: SetFunctionStateAction<ZoomFunction | undefined>;
 }
 
 const ComboContext = React.createContext<ComboContextType>({

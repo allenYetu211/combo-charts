@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 12:39:35
+ * @LastEditTime: 2021-03-29 16:43:24
  * @Description: file content
  */
 import React, {
@@ -53,7 +53,7 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
         ? d3Geo.geoMercator().fitExtent(
             [
               [0, 0],
-              [width, height],
+              [width || 0, height || 0],
             ],
             geoData
           )

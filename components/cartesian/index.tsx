@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-18 22:33:10
+ * @LastEditTime: 2021-03-29 16:48:08
  */
 import React, {
   useCallback,
@@ -30,25 +30,26 @@ interface CartesianPropsType {
 
 const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
   const { children, xAxis, yAxis, style } = props;
-  const context = useContext(ComboContext);
+  const { width, height } = useContext(ComboContext);
+  const { innerWidth, innerHeight } = useMemo(
+    () => ({
+      innerWidth: width || 0,
+      innerHeight: height || 0,
+    }),
+    [width, height]
+  );
   const ref = useRef<SVGGElement>(null);
   const padding = useMemo(() => validPadding(style), [style]);
   const [projection, setProjection] = useState<CartesianProjection>({});
 
   useEffect(() => {
-    const x = getAxisProjection(xAxis, [
-      padding[3],
-      context.width - padding[1],
-    ]);
-    const y = getAxisProjection(yAxis, [
-      context.height - padding[2],
-      padding[0],
-    ]);
+    const x = getAxisProjection(xAxis, [padding[3], innerWidth - padding[1]]);
+    const y = getAxisProjection(yAxis, [innerHeight - padding[2], padding[0]]);
     setProjection({
       x,
       y,
     });
-  }, [xAxis, yAxis, padding, context.width, context.height]);
+  }, [xAxis, yAxis, padding, innerWidth, innerHeight]);
 
   /**
    * 设置 x 轴的映射
@@ -73,12 +74,12 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
           max: mx,
         },
         type === 'x'
-          ? [padding[3], context.width - padding[1]]
-          : [context.height - padding[2], padding[0]]
+          ? [padding[3], innerWidth - padding[1]]
+          : [innerHeight - padding[2], padding[0]]
       );
       setProjection(p);
     },
-    [context.height, context.width, padding, projection, xAxis, yAxis]
+    [innerHeight, innerWidth, padding, projection, xAxis, yAxis]
   );
 
   useEffect(() => {
@@ -94,7 +95,7 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
       if (projection.x) {
         axis
           .select<SVGGElement>('g.xAxis')
-          .attr('transform', `translate(0, ${context.height - padding[2]})`)
+          .attr('transform', `translate(0, ${innerHeight - padding[2]})`)
           .call(d3Axis.axisBottom(projection.x));
       }
       if (projection.y) {
@@ -104,7 +105,7 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
           .call(d3Axis.axisLeft(projection.y));
       }
     }
-  }, [projection, context.height, style, xAxis, yAxis, padding]);
+  }, [projection, innerHeight, style, xAxis, yAxis, padding]);
 
   return (
     <>
