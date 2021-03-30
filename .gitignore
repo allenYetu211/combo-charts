@@ -9,3 +9,7 @@ tmp
 # yarn
 yarn.lock
 yarn-error.log
+
+# ide
+.vscode
+.idea
