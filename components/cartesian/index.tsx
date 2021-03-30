@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 16:48:08
+ * @LastEditTime: 2021-03-30 14:43:54
  */
 import React, {
   useCallback,
@@ -38,10 +38,14 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
     }),
     [width, height]
   );
-  const ref = useRef<SVGGElement>(null);
+  const xRef = useRef<SVGGElement>(null);
+  const yRef = useRef<SVGGElement>(null);
   const padding = useMemo(() => validPadding(style), [style]);
   const [projection, setProjection] = useState<CartesianProjection>({});
 
+  /**
+   * 初始化 x、y 轴映射函数
+   */
   useEffect(() => {
     const x = getAxisProjection(xAxis, [padding[3], innerWidth - padding[1]]);
     const y = getAxisProjection(yAxis, [innerHeight - padding[2], padding[0]]);
@@ -82,34 +86,34 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
     [innerHeight, innerWidth, padding, projection, xAxis, yAxis]
   );
 
+  /**
+   * 绘制 x、y 轴轴线
+   */
   useEffect(() => {
-    if (ref.current) {
-      const axis = d3Selection.select(ref.current);
-      axis
-        .selectChildren('g')
-        .data(['xAxis', 'yAxis'])
-        .join('g')
-        .attr('class', function (data) {
-          return data;
-        });
+    if (xRef.current && yRef.current) {
+      const xA = d3Selection.select(xRef.current);
+      const yA = d3Selection.select(yRef.current);
       if (projection.x) {
-        axis
-          .select<SVGGElement>('g.xAxis')
-          .attr('transform', `translate(0, ${innerHeight - padding[2]})`)
-          .call(d3Axis.axisBottom(projection.x));
+        xA.attr('transform', `translate(0, ${innerHeight - padding[2]})`).call(
+          d3Axis.axisBottom(projection.x)
+        );
       }
       if (projection.y) {
-        axis
-          .select<SVGGElement>('g.yAxis')
-          .attr('transform', `translate(${padding[3]}, 0)`)
-          .call(d3Axis.axisLeft(projection.y));
+        yA.attr('transform', `translate(${padding[3]}, 0)`).call(
+          d3Axis.axisLeft(projection.y)
+        );
       }
     }
-  }, [projection, innerHeight, style, xAxis, yAxis, padding]);
+  }, [projection, innerHeight, padding]);
 
   return (
     <>
-      <g ref={ref} />
+      <g>
+        {/* x axis */}
+        <g ref={xRef} />
+        {/* y axis */}
+        <g ref={yRef} />
+      </g>
       <CartesianContext.Provider
         value={{
           projection,
