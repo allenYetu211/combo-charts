@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 15:33:51
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-18 22:28:32
+ * @LastEditTime: 2021-03-30 17:24:12
  */
 import * as d3Axis from 'd3-axis';
 
@@ -29,7 +29,7 @@ export interface CategoryAxis {
   domain?: string[];
 }
 
-export type Axis = ValueAxis | CategoryAxis;
+export type AxisType = ValueAxis | CategoryAxis;
 
 export type Space = [number, number, number, number] | number;
 

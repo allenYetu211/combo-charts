@@ -4,56 +4,50 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-30 14:43:54
+ * @LastEditTime: 2021-03-30 22:26:11
  */
 import React, {
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import ComboContext from '../combo/context';
 import CartesianContext, { CartesianProjection } from './context';
 import { getAxisProjection, validPadding } from './utils';
-import * as d3Selection from 'd3-selection';
-import * as d3Axis from 'd3-axis';
-import { Axis, CartesianStyle, ProjectionSetter } from './types';
+import { AxisMode, AxisType, CartesianStyle, ProjectionSetter } from './types';
+import Axis from './Axis';
 
 interface CartesianPropsType {
-  xAxis?: Axis;
-  yAxis?: Axis;
+  xAxis?: AxisType;
+  yAxis?: AxisType;
   style?: CartesianStyle;
   children?: React.ReactNode;
 }
 
 const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
-  const { children, xAxis, yAxis, style } = props;
+  const { children, xAxis = {}, yAxis = {}, style } = props;
   const { width, height } = useContext(ComboContext);
-  const { innerWidth, innerHeight } = useMemo(
-    () => ({
-      innerWidth: width || 0,
-      innerHeight: height || 0,
-    }),
-    [width, height]
-  );
-  const xRef = useRef<SVGGElement>(null);
-  const yRef = useRef<SVGGElement>(null);
   const padding = useMemo(() => validPadding(style), [style]);
   const [projection, setProjection] = useState<CartesianProjection>({});
+  const [xMode, setXMode] = useState<AxisMode | undefined>(undefined);
+  const [yMode, setYMode] = useState<AxisMode | undefined>(undefined);
 
   /**
    * 初始化 x、y 轴映射函数
    */
   useEffect(() => {
-    const x = getAxisProjection(xAxis, [padding[3], innerWidth - padding[1]]);
-    const y = getAxisProjection(yAxis, [innerHeight - padding[2], padding[0]]);
+    if (!width || !height) {
+      return;
+    }
+    const x = getAxisProjection(xAxis, [padding[3], width - padding[1]]);
+    const y = getAxisProjection(yAxis, [height - padding[2], padding[0]]);
     setProjection({
       x,
       y,
     });
-  }, [xAxis, yAxis, padding, innerWidth, innerHeight]);
+  }, [height, padding, width, xAxis, yAxis]);
 
   /**
    * 设置 x 轴的映射
@@ -63,7 +57,7 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
   const updateProjection = useCallback<ProjectionSetter>(
     (type, minValue, maxValue) => {
       const axis = type === 'x' ? xAxis : yAxis;
-      if (!axis || axis.mode !== 'value') {
+      if (axis.mode !== 'value' || !width || !height) {
         return;
       }
       const { min, max } = axis;
@@ -78,63 +72,35 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
           max: mx,
         },
         type === 'x'
-          ? [padding[3], innerWidth - padding[1]]
-          : [innerHeight - padding[2], padding[0]]
+          ? [padding[3], width - padding[1]]
+          : [height - padding[2], padding[0]]
       );
       setProjection(p);
     },
-    [innerHeight, innerWidth, padding, projection, xAxis, yAxis]
+    [height, padding, projection, width, xAxis, yAxis]
   );
-
-  /**
-   * 绘制 x、y 轴轴线
-   */
-  useEffect(() => {
-    if (xRef.current && yRef.current) {
-      const xA = d3Selection.select(xRef.current);
-      const yA = d3Selection.select(yRef.current);
-      if (projection.x) {
-        xA.attr('transform', `translate(0, ${innerHeight - padding[2]})`).call(
-          d3Axis.axisBottom(projection.x)
-        );
-      }
-      if (projection.y) {
-        yA.attr('transform', `translate(${padding[3]}, 0)`).call(
-          d3Axis.axisLeft(projection.y)
-        );
-      }
-    }
-  }, [projection, innerHeight, padding]);
 
   return (
     <>
-      <g>
-        {/* x axis */}
-        <g ref={xRef} />
-        {/* y axis */}
-        <g ref={yRef} />
-      </g>
       <CartesianContext.Provider
         value={{
           projection,
+          xMode,
+          yMode,
+          setXMode,
+          setYMode,
           updateProjection,
-          xMode: xAxis?.mode,
-          yMode: yAxis?.mode,
         }}
       >
+        {/* xAxis */}
+        <Axis padding={padding} type="x" {...xAxis} />
+        {/* yAxis */}
+        <Axis padding={padding} type="y" {...yAxis} />
+        {/* children */}
         {children}
       </CartesianContext.Provider>
     </>
   );
-};
-
-Cartesian.defaultProps = {
-  xAxis: {
-    mode: 'category',
-  },
-  yAxis: {
-    mode: 'value',
-  },
 };
 
 export default Cartesian;

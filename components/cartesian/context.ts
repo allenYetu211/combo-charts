@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:16:56
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 16:48:41
+ * @LastEditTime: 2021-03-30 17:32:03
  */
 import React from 'react';
 import { GlobalContextType } from '../_utils/types';
@@ -18,13 +18,11 @@ export interface CartesianProjection {
 interface CartesianContextType extends GlobalContextType<CartesianProjection> {
   xMode?: AxisMode | undefined;
   yMode?: AxisMode | undefined;
+  setXMode?: (v: AxisMode) => void;
+  setYMode?: (v: AxisMode) => void;
   updateProjection?: ProjectionSetter;
 }
 
-const CartesianContext = React.createContext<CartesianContextType>({
-  xMode: 'category',
-  yMode: 'value',
-  updateProjection: () => 0,
-});
+const CartesianContext = React.createContext<CartesianContextType>({});
 
 export default CartesianContext;
