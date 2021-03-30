@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-09 09:14:08
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 16:42:10
+ * @LastEditTime: 2021-03-30 17:04:33
  */
 
 import React from 'react';
@@ -14,12 +14,14 @@ import { ZoomFunction } from './types';
 export interface ComboContextType {
   width?: number;
   height?: number;
+  maximumScale?: number;
   setZoomFunction?: SetFunctionStateAction<ZoomFunction | undefined>;
 }
 
 const ComboContext = React.createContext<ComboContextType>({
   width: 0,
   height: 0,
+  maximumScale: 1,
   setZoomFunction: () => 0,
 });
 

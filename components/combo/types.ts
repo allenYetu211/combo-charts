@@ -4,13 +4,8 @@
  * @Author: liuyin
  * @Date: 2021-03-15 13:38:01
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-15 13:38:29
+ * @LastEditTime: 2021-03-30 16:55:08
  */
 import * as d3Zoom from 'd3-zoom';
 
-export interface ZoomFunction {
-  (
-    this: SVGSVGElement,
-    event: d3Zoom.D3ZoomEvent<SVGSVGElement, unknown>
-  ): void;
-}
+export type ZoomFunction = d3Zoom.ZoomBehavior<SVGSVGElement, unknown>;
