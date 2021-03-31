@@ -2,50 +2,33 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 16:43:24
+ * @LastEditTime: 2021-03-31 14:45:56
  * @Description: file content
  */
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as d3Geo from 'd3-geo';
 import * as d3Selection from 'd3-selection';
 import GeoContext from './context';
-import ComboContext from '../combo/context';
+import * as d3Zoom from 'd3-zoom';
+import { GeoJSONFunction, SimpleGeoJSON, GeoStyle } from './types';
+import { BoxProps, Scale } from '../_utils/types';
+import useBox from '../_utils/hooks/useBox';
 
-export interface SimpleGeoJSON {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  features: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type: any;
-}
-
-export type GeoJSONFunction = () => Promise<SimpleGeoJSON>;
-
-export interface GeoStyle {
-  color?: string;
-  borderColor?: string;
-  borderWidth?: number;
-}
-
-interface GeoPropsType {
+interface GeoPropsType extends BoxProps {
   geoJson?: GeoJSONFunction | SimpleGeoJSON;
   style?: GeoStyle;
   children?: React.ReactNode;
+  scale?: false | Scale;
 }
 
 const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
-  const { children, geoJson, style } = props;
+  const { children, geoJson, style, scale, width, height } = props;
+  const svgRef = useRef<SVGSVGElement>(null);
   const ref = useRef<SVGGElement>(null);
   const [geoData, setGeoData] = useState<
     d3Geo.ExtendedFeatureCollection | undefined
   >(undefined);
-  const { width, height } = useContext(ComboContext);
+  const { innerHeight, innerWidth } = useBox(width, height, svgRef.current);
 
   const projection = useMemo(
     () =>
@@ -53,12 +36,12 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
         ? d3Geo.geoMercator().fitExtent(
             [
               [0, 0],
-              [width || 0, height || 0],
+              [innerWidth, innerHeight],
             ],
             geoData
           )
         : undefined,
-    [width, height, geoData]
+    [geoData, innerHeight, innerWidth]
   );
 
   async function waitGeoData(fn: GeoJSONFunction) {
@@ -76,39 +59,56 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
     }
   }, [geoJson]);
 
-  const redraw = useCallback(() => {
+  useEffect(() => {
     if (ref.current && projection && geoData) {
       const bx = d3Selection.select(ref.current);
       bx.selectAll('path')
         .data(geoData.features)
         .join('path')
-        .attr('d', d3Geo.geoPath(projection));
-    }
-  }, [geoData, projection]);
-
-  const restyle = useCallback(() => {
-    if (ref.current) {
-      d3Selection
-        .select(ref.current)
-        .selectAll('path')
+        .attr('d', d3Geo.geoPath(projection))
         .attr('fill', () => style?.color || null)
         .attr('stroke', () => style?.borderColor || null)
         .attr('stroke-width', () => style?.borderWidth || null);
     }
-  }, [style]);
+  }, [geoData, projection, style]);
 
   useEffect(() => {
-    redraw();
-    restyle();
-  }, [redraw, restyle]);
+    if (scale && svgRef.current) {
+      const { maximum, minimum } = scale;
+      const max = maximum && maximum > 1 ? maximum : 1;
+      const min = minimum && minimum > 1 ? minimum : 1;
+      const zoom = d3Zoom
+        .zoom<SVGSVGElement, unknown>()
+        .translateExtent([
+          [0, 0],
+          [innerWidth, innerHeight],
+        ])
+        .scaleExtent([min, max])
+        .on('zoom', function (this, event) {
+          if (this) {
+            const t = event.transform;
+            const w = innerWidth / t.k;
+            const h = innerHeight / t.k;
+            let x = t.x > 0 ? 0 : -t.x / t.k;
+            x = t.x > -innerWidth * (t.k - 1) ? x : innerWidth - w;
+            let y = t.y > 0 ? 0 : -t.y / t.k;
+            y = t.y > -innerHeight * (t.k - 1) ? y : innerHeight - h;
+            this.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+          }
+        });
+      d3Selection.select(svgRef.current).call(zoom);
+    }
+  }, [innerHeight, innerWidth, scale]);
 
   return (
-    <>
+    <svg ref={svgRef} width={innerWidth} height={innerHeight}>
       <g ref={ref} />
-      <GeoContext.Provider value={{ projection }}>
+      <GeoContext.Provider
+        value={{ projection, width: innerWidth, height: innerHeight }}
+      >
         {children}
       </GeoContext.Provider>
-    </>
+    </svg>
   );
 };
 

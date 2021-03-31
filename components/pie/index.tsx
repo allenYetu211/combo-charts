@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-29 15:13:21
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 16:54:23
+ * @LastEditTime: 2021-03-31 17:31:37
  */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { validNumber } from '../_utils/utils';
@@ -12,7 +12,6 @@ import { PieData } from './types';
 import * as d3Shape from 'd3-shape';
 import * as d3Selection from 'd3-selection';
 import PolarContext from '../polar/context';
-import ComboContext from '../combo/context';
 
 interface PiePropsType {
   data?: PieData[];
@@ -23,8 +22,7 @@ interface PiePropsType {
 const Pie: React.FC<PiePropsType> = (props: PiePropsType) => {
   const { data, innerRadius, outerRadius } = props;
   const ref = useRef<SVGGElement>(null);
-  const { projection } = useContext(PolarContext);
-  const { width, height } = useContext(ComboContext);
+  const { projection, width, height } = useContext(PolarContext);
   const radius = useMemo<[number, number]>(
     () => [validNumber(innerRadius), validNumber(outerRadius)],
     [innerRadius, outerRadius]

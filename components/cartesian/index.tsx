@@ -4,50 +4,102 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-30 22:26:11
+ * @LastEditTime: 2021-03-31 16:37:59
  */
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-import ComboContext from '../combo/context';
 import CartesianContext, { CartesianProjection } from './context';
 import { getAxisProjection, validPadding } from './utils';
-import { AxisMode, AxisType, CartesianStyle, ProjectionSetter } from './types';
+import {
+  AxisMode,
+  AxisType,
+  CartesianScale,
+  CartesianStyle,
+  MultiAxisScale,
+  ProjectionSetter,
+  ZoomType,
+} from './types';
 import Axis from './Axis';
+import useBox from '../_utils/hooks/useBox';
+import { BoxProps } from '../_utils/types';
+import { useZoom } from './useZoom';
 
-interface CartesianPropsType {
+interface CartesianPropsType extends BoxProps {
   xAxis?: AxisType;
   yAxis?: AxisType;
   style?: CartesianStyle;
+  scale?: CartesianScale;
   children?: React.ReactNode;
 }
 
 const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
-  const { children, xAxis = {}, yAxis = {}, style } = props;
-  const { width, height } = useContext(ComboContext);
+  const {
+    children,
+    xAxis = {},
+    yAxis = {},
+    style,
+    width,
+    height,
+    scale,
+  } = props;
+  const ref = useRef<SVGSVGElement>(null);
   const padding = useMemo(() => validPadding(style), [style]);
   const [projection, setProjection] = useState<CartesianProjection>({});
+  const [zoomProjection, setZoomProjection] = useState<CartesianProjection>({});
   const [xMode, setXMode] = useState<AxisMode | undefined>(undefined);
   const [yMode, setYMode] = useState<AxisMode | undefined>(undefined);
+  const [zoom, setZoom] = useState<ZoomType | undefined>(undefined);
+  const { innerHeight, innerWidth } = useBox(width, height, ref.current);
+  const innerScale = useMemo<Required<MultiAxisScale>>(() => {
+    const defaultRes = {
+      x: {
+        minimum: 1,
+        maximum: 1,
+      },
+      y: {
+        minimum: 1,
+        maximum: 1,
+      },
+    };
+    if (!scale) {
+      return defaultRes;
+    }
+
+    defaultRes.x.minimum = scale.minimum || 1;
+    defaultRes.y.minimum = scale.minimum || 1;
+    defaultRes.x.maximum = scale.maximum || 1;
+    defaultRes.y.maximum = scale.maximum || 1;
+    if (scale.x) {
+      defaultRes.x.minimum = scale.x.minimum || 1;
+      defaultRes.x.maximum = scale.x.maximum || 1;
+    }
+    if (scale.y) {
+      defaultRes.y.minimum = scale.y.minimum || 1;
+      defaultRes.y.maximum = scale.y.maximum || 1;
+    }
+    return defaultRes;
+  }, [scale]);
 
   /**
    * 初始化 x、y 轴映射函数
    */
   useEffect(() => {
-    if (!width || !height) {
-      return;
-    }
-    const x = getAxisProjection(xAxis, [padding[3], width - padding[1]]);
-    const y = getAxisProjection(yAxis, [height - padding[2], padding[0]]);
+    const x = getAxisProjection(xAxis, [padding[3], innerWidth - padding[1]]);
+    const y = getAxisProjection(yAxis, [innerHeight - padding[2], padding[0]]);
     setProjection({
       x,
       y,
     });
-  }, [height, padding, width, xAxis, yAxis]);
+    setZoomProjection({
+      x,
+      y,
+    });
+  }, [innerWidth, padding, innerHeight, xAxis, yAxis]);
 
   /**
    * 设置 x 轴的映射
@@ -57,7 +109,7 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
   const updateProjection = useCallback<ProjectionSetter>(
     (type, minValue, maxValue) => {
       const axis = type === 'x' ? xAxis : yAxis;
-      if (axis.mode !== 'value' || !width || !height) {
+      if (axis.mode !== 'value') {
         return;
       }
       const { min, max } = axis;
@@ -72,34 +124,66 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
           max: mx,
         },
         type === 'x'
-          ? [padding[3], width - padding[1]]
-          : [height - padding[2], padding[0]]
+          ? [padding[3], innerWidth - padding[1]]
+          : [innerHeight - padding[2], padding[0]]
       );
+      setZoomProjection(p);
       setProjection(p);
     },
-    [height, padding, projection, width, xAxis, yAxis]
+    [innerHeight, padding, projection, innerWidth, xAxis, yAxis]
+  );
+
+  useZoom(
+    (previous, current, scale, point) => {
+      setZoom({
+        previous,
+        current,
+        scale,
+        point,
+      });
+    },
+    innerWidth,
+    innerHeight,
+    ref.current
   );
 
   return (
-    <>
+    <svg ref={ref} width={innerWidth} height={innerHeight}>
       <CartesianContext.Provider
         value={{
-          projection,
+          height: innerHeight,
+          width: innerWidth,
+          projection: zoomProjection,
           xMode,
           yMode,
           setXMode,
           setYMode,
           updateProjection,
+          setProjection: setZoomProjection,
         }}
       >
         {/* xAxis */}
-        <Axis padding={padding} type="x" {...xAxis} />
+        <Axis
+          padding={padding}
+          projection={projection}
+          type="x"
+          zoom={zoom}
+          {...xAxis}
+          scale={innerScale}
+        />
         {/* yAxis */}
-        <Axis padding={padding} type="y" {...yAxis} />
+        <Axis
+          padding={padding}
+          projection={projection}
+          type="y"
+          zoom={zoom}
+          {...yAxis}
+          scale={innerScale}
+        />
         {/* children */}
         {children}
       </CartesianContext.Provider>
-    </>
+    </svg>
   );
 };
 

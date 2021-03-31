@@ -4,9 +4,11 @@
  * @Author: liuyin
  * @Date: 2021-03-10 15:33:51
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-30 17:24:12
+ * @LastEditTime: 2021-03-31 15:02:27
  */
 import * as d3Axis from 'd3-axis';
+import * as d3Zoom from 'd3-zoom';
+import { Coordinate, Scale } from '../_utils/types';
 
 export interface CartesianStyle {
   padding?: Space;
@@ -46,3 +48,24 @@ export type ProjectionSetter = (
   minValue: number,
   maxValue: number
 ) => void;
+
+export interface ZoomType {
+  previous: d3Zoom.ZoomTransform;
+  current: d3Zoom.ZoomTransform;
+  scale: number;
+  point: [number, number];
+}
+
+export interface CartesianChildrenProps {
+  data?: number[] | Coordinate[];
+}
+
+export interface MultiAxisScale {
+  x: Required<Scale>;
+  y: Required<Scale>;
+}
+
+export type CartesianScale = Scale & {
+  x?: Scale;
+  y?: Scale;
+};
