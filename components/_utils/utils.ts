@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-08 17:01:30
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-29 15:29:36
+ * @LastEditTime: 2021-04-01 10:59:07
  */
 export function hasNaN(arr: number[]): boolean {
   for (const v of arr) {
@@ -22,7 +22,7 @@ export function validNumber(v: string | number | undefined): number {
   if (typeof v === 'number') {
     return v;
   }
-  if (/^[0-9]+.?[0-9]*$/.test(v)) {
+  if (/^[+-]?(0|([1-9]\d*))(\.\d+)?$/.test(v)) {
     return Number(v);
   }
   return 0;
