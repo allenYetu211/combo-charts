@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-29 15:13:21
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 17:31:37
+ * @LastEditTime: 2021-04-01 11:29:19
  */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { validNumber } from '../_utils/utils';
@@ -23,10 +23,24 @@ const Pie: React.FC<PiePropsType> = (props: PiePropsType) => {
   const { data, innerRadius, outerRadius } = props;
   const ref = useRef<SVGGElement>(null);
   const { projection, width, height } = useContext(PolarContext);
-  const radius = useMemo<[number, number]>(
-    () => [validNumber(innerRadius), validNumber(outerRadius)],
-    [innerRadius, outerRadius]
-  );
+  const radius = useMemo<[number, number]>(() => {
+    const res: [number, number] = [
+      validNumber(innerRadius),
+      validNumber(outerRadius) || 1,
+    ];
+    const minRadius = Math.min(width || 0, height || 0) / 2;
+    if (res[0] < 0) {
+      res[0] = 0;
+    } else if (res[0] > 1) {
+      res[0] = 1;
+    }
+    if (res[1] < 0) {
+      res[1] = 0;
+    } else if (res[1] > 1) {
+      res[1] = 1;
+    }
+    return [res[0] * minRadius, res[1] * minRadius];
+  }, [innerRadius, outerRadius, width, height]);
   const arc = useMemo(
     () =>
       d3Shape

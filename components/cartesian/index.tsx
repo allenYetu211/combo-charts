@@ -4,15 +4,9 @@
  * @Author: liuyin
  * @Date: 2021-03-10 09:14:18
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 16:37:59
+ * @LastEditTime: 2021-04-01 11:25:47
  */
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CartesianContext, { CartesianProjection } from './context';
 import { getAxisProjection, validPadding } from './utils';
 import {
@@ -47,14 +41,13 @@ const Cartesian: React.FC<CartesianPropsType> = (props: CartesianPropsType) => {
     height,
     scale,
   } = props;
-  const ref = useRef<SVGSVGElement>(null);
   const padding = useMemo(() => validPadding(style), [style]);
   const [projection, setProjection] = useState<CartesianProjection>({});
   const [zoomProjection, setZoomProjection] = useState<CartesianProjection>({});
   const [xMode, setXMode] = useState<AxisMode | undefined>(undefined);
   const [yMode, setYMode] = useState<AxisMode | undefined>(undefined);
   const [zoom, setZoom] = useState<ZoomType | undefined>(undefined);
-  const { innerHeight, innerWidth } = useBox(width, height, ref.current);
+  const { innerHeight, innerWidth, ref } = useBox(width, height);
   const innerScale = useMemo<Required<MultiAxisScale>>(() => {
     const defaultRes = {
       x: {

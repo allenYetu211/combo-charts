@@ -2,7 +2,7 @@
  * @Author: liuyin
  * @Date: 2021-03-04 22:01:20
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 14:45:56
+ * @LastEditTime: 2021-04-01 11:28:16
  * @Description: file content
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -23,12 +23,11 @@ interface GeoPropsType extends BoxProps {
 
 const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
   const { children, geoJson, style, scale, width, height } = props;
-  const svgRef = useRef<SVGSVGElement>(null);
   const ref = useRef<SVGGElement>(null);
   const [geoData, setGeoData] = useState<
     d3Geo.ExtendedFeatureCollection | undefined
   >(undefined);
-  const { innerHeight, innerWidth } = useBox(width, height, svgRef.current);
+  const { innerHeight, innerWidth, ref: svgRef } = useBox(width, height);
 
   const projection = useMemo(
     () =>
@@ -98,7 +97,7 @@ const Geo: React.FC<GeoPropsType> = (props: GeoPropsType) => {
         });
       d3Selection.select(svgRef.current).call(zoom);
     }
-  }, [innerHeight, innerWidth, scale]);
+  }, [innerHeight, innerWidth, scale, svgRef]);
 
   return (
     <svg ref={svgRef} width={innerWidth} height={innerHeight}>

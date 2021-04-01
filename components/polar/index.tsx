@@ -4,7 +4,7 @@
  * @Author: liuyin
  * @Date: 2021-03-29 14:53:10
  * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 17:31:25
+ * @LastEditTime: 2021-04-01 11:25:00
  */
 import React, { useMemo, useRef } from 'react';
 import PolarContext from './context';
@@ -24,8 +24,7 @@ interface PolarPropsType extends BoxProps {
 const Polar: React.FC<PolarPropsType> = (props: PolarPropsType) => {
   const { padAngle, children, width, height } = props;
   const ref = useRef<SVGGElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const { innerHeight, innerWidth } = useBox(width, height, svgRef.current);
+  const { innerHeight, innerWidth, ref: svgRef } = useBox(width, height);
   const validPadAngle = useMemo(() => {
     if (padAngle && padAngle > 0 && padAngle < 2 * Math.PI) {
       return padAngle;
@@ -39,7 +38,9 @@ const Polar: React.FC<PolarPropsType> = (props: PolarPropsType) => {
   return (
     <svg ref={svgRef} width={innerWidth} height={innerHeight}>
       <g ref={ref} />
-      <PolarContext.Provider value={{ projection }}>
+      <PolarContext.Provider
+        value={{ projection, width: innerWidth, height: innerHeight }}
+      >
         {children}
       </PolarContext.Provider>
     </svg>
