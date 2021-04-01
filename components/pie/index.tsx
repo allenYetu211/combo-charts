@@ -4,23 +4,24 @@
  * @Author: liuyin
  * @Date: 2021-03-29 15:13:21
  * @LastEditors: liuyin
- * @LastEditTime: 2021-04-01 11:29:19
+ * @LastEditTime: 2021-04-01 14:19:53
  */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { validNumber } from '../_utils/utils';
-import { PieData } from './types';
 import * as d3Shape from 'd3-shape';
 import * as d3Selection from 'd3-selection';
 import PolarContext from '../polar/context';
+import { PieStyle } from './types';
 
 interface PiePropsType {
-  data?: PieData[];
+  data?: number[];
   innerRadius?: number | string;
   outerRadius?: number | string;
+  style: PieStyle;
 }
 
 const Pie: React.FC<PiePropsType> = (props: PiePropsType) => {
-  const { data, innerRadius, outerRadius } = props;
+  const { data, innerRadius, outerRadius, style } = props;
   const ref = useRef<SVGGElement>(null);
   const { projection, width, height } = useContext(PolarContext);
   const radius = useMemo<[number, number]>(() => {
@@ -52,7 +53,7 @@ const Pie: React.FC<PiePropsType> = (props: PiePropsType) => {
 
   useEffect(() => {
     if (ref.current && data && projection) {
-      const arcs = projection(data.map((v) => v.value));
+      const arcs = projection(data);
       d3Selection
         .select(ref.current)
         .selectAll('path')
@@ -60,10 +61,12 @@ const Pie: React.FC<PiePropsType> = (props: PiePropsType) => {
         .join('path')
         .attr('d', arc)
         .attr('fill', function (_, i) {
-          return data[i]?.style?.color || null;
+          const l = style?.colors?.length || 0;
+          const idx = i >= l ? i % l : i;
+          return style?.colors?.[idx] || null;
         });
     }
-  }, [data, projection, arc]);
+  }, [data, projection, arc, style]);
 
   useEffect(() => {
     if (ref.current && width && height) {
