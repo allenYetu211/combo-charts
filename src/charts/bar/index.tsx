@@ -6,12 +6,22 @@ import {
   InjectProps,
 } from '../../container/cartesian';
 import { BarDirection, BarStyle } from './types';
-interface BarProps extends InjectProps {
+import { AnimationProps } from '../../animation/types';
+import defaultAnimationProps from '../../animation';
+import { progressBar } from '../../animation/progress';
+import { validNumber } from '../../utils/utils';
+
+interface BarProps extends InjectProps, AnimationProps {
   style?: BarStyle;
 }
 
 const Bar: React.FC<BarProps> = (props: BarProps) => {
-  const { injectData, style } = props;
+  const {
+    injectData,
+    style,
+    animation = defaultAnimationProps.animation,
+    animationTime = defaultAnimationProps.animationTime,
+  } = props;
   const ref = useRef<SVGGElement>(null);
   const { xMode, yMode } = useContext(CartesianContext);
   const direction: BarDirection = useMemo<BarDirection>(() => {
@@ -44,7 +54,7 @@ const Bar: React.FC<BarProps> = (props: BarProps) => {
           height: w,
         };
       });
-      d3Selection
+      const el = d3Selection
         .select(ref.current)
         .selectAll<SVGRectElement, unknown>('rect')
         .data(finalData)
@@ -54,8 +64,9 @@ const Bar: React.FC<BarProps> = (props: BarProps) => {
         .attr('height', (d) => d.height)
         .attr('width', (d) => d.width)
         .attr('fill', () => style?.color || null);
+      animation && progressBar(el, validNumber(animationTime), direction);
     }
-  }, [injectData, style, direction]);
+  }, [injectData, style, direction, animation, animationTime]);
 
   return <g ref={ref} />;
 };
