@@ -1,11 +1,3 @@
-/*
- * @Description: 构建库
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-04 00:45:15
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-27 11:10:15
- */
 const fs = require('fs-extra');
 const glob = require('glob');
 const chalk = require('chalk');
@@ -24,7 +16,7 @@ const outDir = [
     path: './lib',
   },
 ];
-const source = './components';
+const source = './src';
 const tsCmd = 'tsc';
 const times = 4;
 const temp = './tmp';

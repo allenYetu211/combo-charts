@@ -1,11 +1,3 @@
-/*
- * @Description: 
- * @version: 
- * @Author: liuyin
- * @Date: 2021-03-27 10:55:49
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-27 11:09:39
- */
 const fs = require('fs-extra');
 const path = require('path');
 

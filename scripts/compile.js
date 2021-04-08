@@ -1,10 +1,3 @@
-/*
- * @Author: liuyin
- * @Date: 2021-03-23 22:43:04
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-27 11:02:04
- * @Description: file content
- */
 const babel = require('@babel/core');
 const fs = require('fs-extra');
 const path = require('path');
