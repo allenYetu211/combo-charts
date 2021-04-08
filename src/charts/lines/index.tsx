@@ -5,15 +5,24 @@ import { GeoContext } from '../../container/geo';
 import { hasNaN, validNumber } from '../../utils/utils';
 import { computeControllPoint } from './utils';
 import { CurvePoints, LinesData, LinesModel, LinesStyle } from './types';
+import { AnimationProps } from '../../animation/types';
+import { progressPath } from '../../animation/progress';
+import defaultAnimationProps from '../../animation';
 
-interface LinesProps {
+interface LinesProps extends AnimationProps {
   data?: LinesData[];
   curve?: number | string;
   style?: LinesStyle;
 }
 
 const Lines: React.FC<LinesProps> = (props: LinesProps) => {
-  const { data, style, curve } = props;
+  const {
+    data,
+    style,
+    curve,
+    animation = defaultAnimationProps.animation,
+    animationTime = defaultAnimationProps.animationTime,
+  } = props;
   const ref = useRef<SVGGElement>(null);
   const { projection } = useContext(GeoContext);
   const model = useMemo<LinesModel>(() => {
@@ -46,7 +55,7 @@ const Lines: React.FC<LinesProps> = (props: LinesProps) => {
 
   useEffect(() => {
     if (ref.current && model.paths) {
-      d3Selection
+      const el = d3Selection
         .select(ref.current)
         .selectAll<SVGPathElement, unknown>('path')
         .data(model.paths)
@@ -61,8 +70,9 @@ const Lines: React.FC<LinesProps> = (props: LinesProps) => {
         .attr('stroke-width', function () {
           return style?.width || 1;
         });
+      animation && progressPath(el, validNumber(animationTime));
     }
-  }, [model, style]);
+  }, [model, style, animationTime, animation]);
 
   return (
     <>
