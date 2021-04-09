@@ -7,18 +7,23 @@ import {
   CoordinateBox,
   InjectProps,
 } from '../../container/cartesian';
+import { AnimationProps } from '../../animation/types';
+import { pathLoading } from '../../animation/loading';
+import { validNumber } from '../../utils/utils';
+import defaultAnimationProps from '../../animation';
 
 interface LineStyle {
   color?: string;
   width?: number;
 }
 
-interface LineProps extends InjectProps {
+interface LineProps extends InjectProps, AnimationProps {
   style?: LineStyle;
 }
 
 const Line: React.FC<LineProps> = (props: LineProps) => {
-  const { injectData, style } = props;
+  const { injectData, style, ...rest } = props;
+  const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { xMode, yMode } = useContext(CartesianContext);
   const line = useMemo(() => {
@@ -38,17 +43,18 @@ const Line: React.FC<LineProps> = (props: LineProps) => {
 
   useEffect(() => {
     if (ref.current) {
-      d3Selection
+      const el = d3Selection
         .select(ref.current)
-        .selectAll('path')
+        .selectAll<SVGPathElement, unknown>('path')
         .data([injectData])
         .join('path')
         .attr('fill', 'none')
         .attr('stroke', () => style?.color || null)
         .attr('stroke-width', () => style?.width || null)
         .attr('d', line);
+      animation && pathLoading(el, validNumber(animationTime));
     }
-  }, [injectData, line, style]);
+  }, [injectData, line, style, animation, animationTime]);
 
   return <g ref={ref} />;
 };
