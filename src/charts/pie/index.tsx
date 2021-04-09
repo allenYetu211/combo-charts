@@ -1,19 +1,14 @@
-/*
- * @Description: pie component
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-29 15:13:21
- * @LastEditors: liuyin
- * @LastEditTime: 2021-04-01 14:19:53
- */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { validNumber } from '../../utils/utils';
 import * as d3Shape from 'd3-shape';
 import * as d3Selection from 'd3-selection';
 import { PolarContext } from '../../container/polar';
 import { PieStyle } from './types';
+import { AnimationProps } from '../../animation/types';
+import defaultAnimationProps from '../../animation';
+import { pieLoading } from '../../animation/loading/chart';
 
-interface PieProps {
+interface PieProps extends AnimationProps {
   data?: number[];
   innerRadius?: number | string;
   outerRadius?: number | string;
@@ -21,7 +16,8 @@ interface PieProps {
 }
 
 const Pie: React.FC<PieProps> = (props: PieProps) => {
-  const { data, innerRadius, outerRadius, style } = props;
+  const { data, innerRadius, outerRadius, style, ...rest } = props;
+  const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { projection, width, height } = useContext(PolarContext);
   const radius = useMemo<[number, number]>(() => {
@@ -54,9 +50,9 @@ const Pie: React.FC<PieProps> = (props: PieProps) => {
   useEffect(() => {
     if (ref.current && data && projection) {
       const arcs = projection(data);
-      d3Selection
+      const el = d3Selection
         .select(ref.current)
-        .selectAll('path')
+        .selectAll<SVGPathElement, unknown>('path')
         .data(arcs)
         .join('path')
         .attr('d', arc)
@@ -65,8 +61,9 @@ const Pie: React.FC<PieProps> = (props: PieProps) => {
           const idx = i >= l ? i % l : i;
           return style?.colors?.[idx] || null;
         });
+      animation && pieLoading(el, validNumber(animationTime), arc);
     }
-  }, [data, projection, arc, style]);
+  }, [data, projection, arc, style, animation, animationTime]);
 
   useEffect(() => {
     if (ref.current && width && height) {
