@@ -8,7 +8,7 @@ import {
 import { BarDirection, BarStyle } from './types';
 import { AnimationProps } from '../../animation/types';
 import defaultAnimationProps from '../../animation';
-import { progressBar } from '../../animation/progress';
+import { rectLoading } from '../../animation/loading';
 import { validNumber } from '../../utils/utils';
 
 interface BarProps extends InjectProps, AnimationProps {
@@ -64,7 +64,7 @@ const Bar: React.FC<BarProps> = (props: BarProps) => {
         .attr('height', (d) => d.height)
         .attr('width', (d) => d.width)
         .attr('fill', () => style?.color || null);
-      animation && progressBar(el, validNumber(animationTime), direction);
+      animation && rectLoading(el, validNumber(animationTime), direction);
     }
   }, [injectData, style, direction, animation, animationTime]);
 

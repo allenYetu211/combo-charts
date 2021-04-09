@@ -6,7 +6,7 @@ import { hasNaN, validNumber } from '../../utils/utils';
 import { computeControllPoint } from './utils';
 import { CurvePoints, LinesData, LinesModel, LinesStyle } from './types';
 import { AnimationProps } from '../../animation/types';
-import { progressPath } from '../../animation/progress';
+import { pathLoading } from '../../animation/loading';
 import defaultAnimationProps from '../../animation';
 
 interface LinesProps extends AnimationProps {
@@ -70,7 +70,7 @@ const Lines: React.FC<LinesProps> = (props: LinesProps) => {
         .attr('stroke-width', function () {
           return style?.width || 1;
         });
-      animation && progressPath(el, validNumber(animationTime));
+      animation && pathLoading(el, validNumber(animationTime));
     }
   }, [model, style, animationTime, animation]);
 
