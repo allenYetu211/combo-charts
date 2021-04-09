@@ -1,12 +1,3 @@
-/*
- * @Description:
- * @version:
- * @Author: liuyin
- * @Date: 2021-02-28 10:57:24
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 17:43:50
- */
-
 import { Coordinate } from '../types';
 
 /**

@@ -1,11 +1,3 @@
-/*
- * @Description:
- * @version:
- * @Author: liuyin
- * @Date: 2021-03-10 09:14:18
- * @LastEditors: liuyin
- * @LastEditTime: 2021-04-01 11:25:47
- */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import CartesianContext, { CartesianProjection } from './context';
 import { getAxisProjection, validPadding } from './utils';

@@ -1,12 +1,3 @@
-/*
- * @Description: box
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-31 11:18:12
- * @LastEditors: liuyin
- * @LastEditTime: 2021-04-01 11:26:55
- */
-
 import { useEffect, useRef, useState } from 'react';
 import { validNumber } from '../utils';
 

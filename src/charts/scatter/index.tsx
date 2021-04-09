@@ -1,11 +1,3 @@
-/*
- * @Description: 散点
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-09 14:10:45
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-12 17:43:58
- */
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Coordinate } from '../../types';
 import * as d3Selection from 'd3-selection';

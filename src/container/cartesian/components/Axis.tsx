@@ -1,11 +1,3 @@
-/*
- * @Description: axis
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-30 17:14:39
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 17:26:37
- */
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import CartesianContext, { CartesianProjection } from '../context';
 import { AxisMode, FullSpace, MultiAxisScale, ZoomType } from '../types';

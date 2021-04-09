@@ -1,11 +1,3 @@
-/*
- * @Description: zoom function
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-31 08:59:49
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 17:07:46
- */
 import * as d3Zoom from 'd3-zoom';
 import * as d3Selection from 'd3-selection';
 import * as d3Array from 'd3-array';

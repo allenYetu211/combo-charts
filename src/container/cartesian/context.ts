@@ -1,11 +1,3 @@
-/*
- * @Description: 笛卡尔坐标系context
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-10 09:16:56
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 09:59:54
- */
 import React from 'react';
 import { GlobalContextType } from '../../types';
 import { AxisMode, AxisProjection, ProjectionSetter } from './types';

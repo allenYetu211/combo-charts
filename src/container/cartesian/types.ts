@@ -1,11 +1,3 @@
-/*
- * @Description: 笛卡尔坐标系类型声明
- * @version: 0.0.1
- * @Author: liuyin
- * @Date: 2021-03-10 15:33:51
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 15:02:27
- */
 import * as d3Axis from 'd3-axis';
 import * as d3Zoom from 'd3-zoom';
 import { Coordinate, Scale } from '../../types';

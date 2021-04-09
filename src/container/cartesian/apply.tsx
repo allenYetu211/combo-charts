@@ -1,10 +1,3 @@
-/*
- * @Author: liuyin
- * @Date: 2021-03-17 18:42:10
- * @LastEditors: liuyin
- * @LastEditTime: 2021-03-31 11:30:20
- * @Description: file content
- */
 import React, { useContext, useEffect, useState } from 'react';
 import CartesianContext from './context';
 import { Coordinate } from '../../types';
