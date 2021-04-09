@@ -16,13 +16,8 @@ interface LinesProps extends AnimationProps {
 }
 
 const Lines: React.FC<LinesProps> = (props: LinesProps) => {
-  const {
-    data,
-    style,
-    curve,
-    animation = defaultAnimationProps.animation,
-    animationTime = defaultAnimationProps.animationTime,
-  } = props;
+  const { data, style, curve, ...rest } = props;
+  const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { projection } = useContext(GeoContext);
   const model = useMemo<LinesModel>(() => {

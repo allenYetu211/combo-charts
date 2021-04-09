@@ -16,12 +16,8 @@ interface BarProps extends InjectProps, AnimationProps {
 }
 
 const Bar: React.FC<BarProps> = (props: BarProps) => {
-  const {
-    injectData,
-    style,
-    animation = defaultAnimationProps.animation,
-    animationTime = defaultAnimationProps.animationTime,
-  } = props;
+  const { injectData, style, ...rest } = props;
+  const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { xMode, yMode } = useContext(CartesianContext);
   const direction: BarDirection = useMemo<BarDirection>(() => {
