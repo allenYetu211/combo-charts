@@ -2,6 +2,10 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Coordinate } from '../../types';
 import * as d3Selection from 'd3-selection';
 import { GeoContext } from '../../container/geo';
+import { AnimationProps } from '../../animation/types';
+import { circleLoading } from '../../animation/loading';
+import { validNumber } from '../../utils/utils';
+import defaultAnimationProps from '../../animation';
 
 export interface ScatterStyle {
   color?: string;
@@ -9,14 +13,15 @@ export interface ScatterStyle {
   borderWidth?: number;
 }
 
-interface ScatterProps {
+interface ScatterProps extends AnimationProps {
   data?: Coordinate[];
   size?: number | string;
   style?: ScatterStyle;
 }
 
 const Scatter: React.FC<ScatterProps> = (props: ScatterProps) => {
-  const { data, style, size } = props;
+  const { data, style, size, ...rest } = props;
+  const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { projection } = useContext(GeoContext);
 
@@ -32,16 +37,18 @@ const Scatter: React.FC<ScatterProps> = (props: ScatterProps) => {
           });
         }
       });
-      d3Selection
+      const el = d3Selection
         .select(ref.current)
-        .selectAll('circle')
+        .selectAll<SVGCircleElement, unknown>('circle')
         .data(res)
         .join('circle')
         .attr('cx', (d) => d.x)
         .attr('cy', (d) => d.y)
         .attr('r', size || 0);
+      animation &&
+        circleLoading(el, validNumber(animationTime), validNumber(size));
     }
-  }, [data, projection, size]);
+  }, [data, projection, size, animationTime, animation]);
 
   const restyle = useCallback(() => {
     if (ref.current) {
