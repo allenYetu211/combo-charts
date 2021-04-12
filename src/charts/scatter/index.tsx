@@ -15,12 +15,12 @@ export interface ScatterStyle {
 
 interface ScatterProps extends AnimationProps {
   data?: Coordinate[];
-  size?: number | string;
+  radius?: number | string;
   style?: ScatterStyle;
 }
 
 const Scatter: React.FC<ScatterProps> = (props: ScatterProps) => {
-  const { data, style, size, ...rest } = props;
+  const { data, style, radius, ...rest } = props;
   const { animation, animationTime } = { ...defaultAnimationProps, ...rest };
   const ref = useRef<SVGGElement>(null);
   const { projection } = useContext(GeoContext);
@@ -44,11 +44,11 @@ const Scatter: React.FC<ScatterProps> = (props: ScatterProps) => {
         .join('circle')
         .attr('cx', (d) => d.x)
         .attr('cy', (d) => d.y)
-        .attr('r', size || 0);
+        .attr('r', validNumber(radius));
       animation &&
-        circleLoading(el, validNumber(animationTime), validNumber(size));
+        circleLoading(el, validNumber(animationTime), validNumber(radius));
     }
-  }, [data, projection, size, animationTime, animation]);
+  }, [data, projection, radius, animationTime, animation]);
 
   const restyle = useCallback(() => {
     if (ref.current) {
