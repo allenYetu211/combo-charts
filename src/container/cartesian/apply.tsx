@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import CartesianContext from './context';
-import { Coordinate } from '../../types';
+import { Coordinate, HOC, Subtract } from '../../types';
 import * as d3Axis from 'd3-axis';
 import { AxisMode, CartesianChildrenProps } from './types';
 
@@ -51,15 +51,19 @@ function projectResult(
   }
 }
 
-type Subtract<T, K> = Omit<T, keyof K>;
+export const applyCartesian: HOC<InjectProps, CartesianChildrenProps> = (
+  Component
+) => {
+  type ComponentPropsType = typeof Component extends React.ComponentType<
+    infer P
+  >
+    ? P
+    : never;
+  type WrapPropsType = Subtract<ComponentPropsType, InjectProps> &
+    CartesianChildrenProps;
 
-export const applyCartesian = <P extends InjectProps>(
-  Component: React.ComponentType<P>
-): React.FC<Subtract<P, InjectProps> & CartesianChildrenProps> => {
-  const ApplyComponent: React.FC<
-    Subtract<P, InjectProps> & CartesianChildrenProps
-  > = (props: Subtract<P, InjectProps> & CartesianChildrenProps) => {
-    const { data } = props;
+  const WrapComponent: React.FC<WrapPropsType> = (props: WrapPropsType) => {
+    const { data, ...rest } = props;
     const { projection, updateProjection, xMode, yMode } = useContext(
       CartesianContext
     );
@@ -131,7 +135,7 @@ export const applyCartesian = <P extends InjectProps>(
       }
     }, [data, projection, updateProjection, xMode, yMode]);
 
-    return <Component {...(props as P)} injectData={inject} />;
+    return <Component {...(rest as ComponentPropsType)} injectData={inject} />;
   };
-  return ApplyComponent;
+  return WrapComponent;
 };
